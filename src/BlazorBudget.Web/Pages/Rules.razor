@@ -1,4 +1,4 @@
-﻿@page "/categories"
+﻿@page "/rules"
 @using BlazorBudget.Web.Data
 @using Microsoft.Extensions.Logging
 @inject TransactionService TransactionService
@@ -8,73 +8,80 @@
 <PageTitle>Classification</PageTitle>
 
 <h1>Classification Rule Overview</h1>
-
-@if (categorizedTransactions == null)
+@if (rulesWithMatches == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading Rules...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th># Transactions</th>
-                <th>Total Incoming</th>
-                <th>Total Outgoing</th>
-                <th>..</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var group in categorizedTransactions.OrderBy(g=>g.Key))
-            {
-                <tr>
-                    <td>@group.Key <a href="/categories#@group.Key">⬇️</a></td>
-                    <td>@group.Count()</td>
-                    <td>@group.Where(t => t.Amount > 0).Sum(t => t.Amount)</td>
-                    <td>@group.Where(t => t.Amount < 0).Sum(t => t.Amount)</td>     
-                </tr>
-            }
-        </tbody>
-    </table>
-    @foreach (var group in categorizedTransactions.OrderBy(g=>g.Key))
+
+    @foreach (var rule in allRules)
     {
-        <h3><span id=@group.Key>@group.Key</span></h3>
-        <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Recipient</th>
-                <th>Reference</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transaction in group)
-            {
-                <tr>
-                    <td>@transaction.Date</td>
-                    <td>@transaction.Recipient</td>
-                    <td>@transaction.Reference</td>
-                    <td>@transaction.Amount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        var matches = rulesWithMatches[rule];
+        var active = rule == selectedRule;
+        var accordionBtnClass = active ? "" : "collapsed";
+        var toggleSelected = active? null : rule;
+        var accordionBodyClass = active ? "show" : "collapse";
+
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+            <button class="accordion-button @accordionBtnClass" type="button" @onclick="@(e => selectedRule = toggleSelected)" >
+                @DisplayStringForRule(rule)            
+                <span class="badge bg-secondary">@matches.Count()</span>
+            </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse @accordionBodyClass">
+                <div class="accordion-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Recipient</th>
+                                <th>Reference</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in matches)
+                            {
+                                <tr>
+                                    <td>@transaction.Date</td>
+                                    <td>@transaction.Recipient</td>
+                                    <td>@transaction.Reference</td>
+                                    <td>@transaction.Amount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     }
 }
 
 @code {
     private Transaction[]? allTransactions;
-    private Lookup<string, Transaction>? categorizedTransactions;
-    private ClassificationRule[] rules = Array.Empty<ClassificationRule>();
+    private Lookup<ClassificationRule, Transaction>? rulesWithMatches;
+    private ClassificationRule[] allRules = Array.Empty<ClassificationRule>();
+    private ClassificationRule? selectedRule = null;
 
     protected override async Task OnInitializedAsync()
     {
         allTransactions = await TransactionService.GetTransactionsAsync();
-        rules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
+        allRules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
 
-        categorizedTransactions = (Lookup<string, Transaction>)allTransactions
-            .ToLookup(transaction => rules.First(r => r.Filter.Matches(transaction)).TargetCategory);
+        rulesWithMatches = (Lookup<ClassificationRule, Transaction>)allTransactions
+            .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)));
     }
+
+    private string DisplayStringForRule(ClassificationRule rule)
+    => $"<{rule.Filter.TextFilter}> in {DisplayStringForMatchSource(rule.Filter)} will apply category <{rule.TargetCategory}> ";
+   
+    private string DisplayStringForMatchSource(TransactionFilter filter)
+    => (filter.MatchRecipient, filter.MatchReference) switch {
+        (false, false) => "??",
+        (false, true) => "reference",
+        (true, false) => "recipient",
+        (true, true) => "recipient or reference",
+    };
 }
