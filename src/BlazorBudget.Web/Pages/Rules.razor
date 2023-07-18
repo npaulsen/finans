@@ -14,36 +14,30 @@
 }
 else
 {
+    <Accordion>
     @foreach (var rule in allRules)
     {
         var matches = rulesWithMatches[rule].ToArray();
-        var active = rule == selectedRule;
-        var accordionBtnClass = active ? "" : "collapsed";
-        var toggleSelected = active? null : rule;
-        var accordionBodyClass = active ? "show" : "collapse";
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-            <button class="accordion-button @accordionBtnClass" type="button" @onclick="@(e => selectedRule = toggleSelected)" >
+        <AccordionItem>
+            <TitleTemplate>
                 <span class="bg-success bg-opacity-25" >@rule.Filter.TextFilter.Replace(" ", "␣")</span>
                 &nbsp; in @DisplayStringForMatchSource(rule.Filter) 👉 &nbsp; <CategorySpan Name=@rule.TargetCategory />
                 &nbsp;<span class="badge bg-info rounded-pill">@matches.Count()</span>
-            </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse @accordionBodyClass">
+            </TitleTemplate>
+            <Content>
                 <div class="accordion-body">
                     <TransactionTable Transactions="@matches" />
                 </div>
-            </div>
-        </div>
+            </Content>
+        </AccordionItem>
     }
+    </Accordion>
 }
 
 @code {
     private Transaction[]? allTransactions;
     private Lookup<ClassificationRule, Transaction>? rulesWithMatches;
     private ClassificationRule[] allRules = Array.Empty<ClassificationRule>();
-    private ClassificationRule? selectedRule = null;
 
     protected override async Task OnInitializedAsync()
     {
