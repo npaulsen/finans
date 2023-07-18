@@ -1,0 +1,13 @@
+<span class="badge @cls">@(Name??"??")</span>
+
+@code {
+    [Parameter]
+    public string? Name { get; set; } = null;
+
+    private string cls = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        cls = string.IsNullOrWhiteSpace(Name) || Name == Category.Uncategorized.Name? "text-dark bg-light" : "text-light bg-secondary";
+    }
+}
