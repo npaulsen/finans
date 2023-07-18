@@ -39,28 +39,9 @@ else
     </table>
     @foreach (var group in categorizedTransactions.OrderBy(g=>g.Key))
     {
+        var transactions = group.ToArray();
         <h3><span id=@group.Key>@group.Key</span></h3>
-        <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Recipient</th>
-                <th>Reference</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transaction in group)
-            {
-                <tr>
-                    <td>@transaction.Date</td>
-                    <td>@transaction.Recipient</td>
-                    <td>@transaction.Reference</td>
-                    <td>@transaction.Amount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        <TransactionTable Transactions="@transactions"></TransactionTable>
     }
 }
 
