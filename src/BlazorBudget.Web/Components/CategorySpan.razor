@@ -6,7 +6,7 @@
 
     private string cls = "";
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
         cls = string.IsNullOrWhiteSpace(Name) || Name == Category.Uncategorized.Name? "text-dark bg-light" : "text-light bg-secondary";
     }
