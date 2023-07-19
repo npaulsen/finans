@@ -9,41 +9,7 @@
 
 <h1>Categories</h1>
 
-@if (categorizedTransactions == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th># Transactions</th>
-                <th>Total Incoming</th>
-                <th>Total Outgoing</th>
-                <th>..</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var group in categorizedTransactions.OrderBy(g=>g.Key))
-            {
-                <tr>
-                    <td><CategorySpan Name=@group.Key/> <a href="/categories#@group.Key">⬇️</a></td>
-                    <td>@group.Count()</td>
-                    <td>@group.Where(t => t.Amount > 0).Sum(t => t.Amount)</td>
-                    <td>@group.Where(t => t.Amount < 0).Sum(t => t.Amount)</td>     
-                </tr>
-            }
-        </tbody>
-    </table>
-    @foreach (var group in categorizedTransactions.OrderBy(g=>g.Key))
-    {
-        var transactions = group.ToArray();
-        <h3><CategorySpan Name=@group.Key/></h3>
-        <TransactionTable Transactions="@transactions"></TransactionTable>
-    }
-}
+<GroupedTransactionTable GroupedTransactions=categorizedTransactions />
 
 @code {
     private Transaction[]? allTransactions;
