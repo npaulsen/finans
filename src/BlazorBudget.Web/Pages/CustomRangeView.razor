@@ -1,0 +1,29 @@
+﻿@page "/custom"
+@using Microsoft.Extensions.Logging
+@inject ILogger<Monthview> Logger
+
+<PageTitle>💰 P&L from @firstDate until @lastDate</PageTitle>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            From:
+            <DateInput
+               TValue="DateOnly"
+               @bind-Value="@firstDate"
+               Placeholder="From Date" />
+        </div>
+         <div class="col">
+            Until:
+            <DateInput
+               TValue="DateOnly"
+               @bind-Value="@lastDate"
+               Placeholder="To Date" />
+        </div>
+    </div>
+    <ProfitLossContainer FirstDate=firstDate LastDate=lastDate />
+</div>
+
+@code {
+    private DateOnly firstDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(-1));
+    private DateOnly lastDate = DateOnly.FromDateTime(DateTime.Now);
+}

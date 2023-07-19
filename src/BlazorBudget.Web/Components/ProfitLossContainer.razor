@@ -29,14 +29,16 @@
     protected void AdjustToPeriodChange()
     {
         Logger.LogInformation("adjusting to a period change");
-        if (allTransactions is not null && FirstDate is not null && LastDate is not null)
+        if (allTransactions is not null && allRules is not null && FirstDate is not null && LastDate is not null)
         {
             var transactionsInPeriod = allTransactions
                 .Where(t => t.Date >= FirstDate && t.Date <= LastDate)
                 .ToArray();
-
-            groupedTransactions = (Lookup<string, Transaction>)transactionsInPeriod
-                .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory);
+            if (allRules.Any())
+            {
+                groupedTransactions = (Lookup<string, Transaction>)transactionsInPeriod
+                    .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory);
+            }
         }
     }
 

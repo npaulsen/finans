@@ -1,0 +1,49 @@
+﻿@page "/quarter"
+@using Microsoft.Extensions.Logging
+@inject ILogger<Monthview> Logger
+
+<PageTitle>@title</PageTitle>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <Button Color=ButtonColor.Primary @onclick="Previous">
+                👈 Previous quarter
+            </Button>
+        </div>
+        <div class="col">
+            <h1>@title</h1>
+        </div>
+        <div class="col">
+            <Button Color=ButtonColor.Primary @onclick="Next" >
+                Next quarter 👉
+            </Button>
+        </div>
+    </div>
+    <ProfitLossContainer FirstDate=firstDate LastDate=lastDate />
+</div>
+
+@code {
+    private DateOnly firstDate;
+    private DateOnly lastDate;
+    private string title = "Quarterly View";
+
+    protected override void OnInitialized()
+    {
+        var now = DateTime.Now;
+        Logger.LogInformation("now has month {month}", now.Month);
+        AdjustToPeriod(new DateOnly(now.Year, (now.Month-1)/3*3 + 1, 1).AddMonths(-3));
+    }
+
+    private void Next() => AdjustToPeriod(firstDate.AddMonths(3));
+    private void Previous() => AdjustToPeriod(firstDate.AddMonths(-3));
+
+    private void AdjustToPeriod(DateOnly newFirstDate)
+    {
+        Logger.LogInformation("Adjusting to display quarter of {newFirstDate}", newFirstDate);
+
+        firstDate = newFirstDate;
+        lastDate = firstDate.AddMonths(3).AddDays(-1);
+        var quarterNumber = 1 + (firstDate.Month-1) / 3;
+        title = $"💰 Q{quarterNumber} {firstDate:yyyy}";
+    }
+}

@@ -49,7 +49,7 @@
             };
             if (pieChartInitialized)
             {
-                await pieChart.UpdateAsync(chartData, chartOptions);
+                await pieChart!.UpdateAsync(chartData, chartOptions);
             }
         }
         await base.OnParametersSetAsync();

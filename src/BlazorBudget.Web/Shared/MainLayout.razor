@@ -26,13 +26,23 @@
     }
     private IEnumerable<NavItem> GetNavItems()
     {
+        const string ProfitLoss = "ProfitAndLoss";
+        const string RulesAndCategories = "RulesAndCategories";
+        const string Experimental = "Experimental";
         navItems = new List<NavItem>
         {
             new NavItem { Id = "1", Href = "/", IconName = IconName.HouseDoorFill, Text = "Home", Match=NavLinkMatch.All},
-            new NavItem { Id = "2", Href = "/alltransactions", IconName = IconName.ListColumns, Text = "All Transactions"},
-            new NavItem { Id = "3", Href = "/month", IconName = IconName.CalendarCheck, Text = "Monthly View"},
-            new NavItem { Id = "4", Href = "/categories", IconName = IconName.Tags, Text = "Categories"},
-            new NavItem { Id = "5", Href = "/rules", IconName = IconName.Forward, Text = "Rules"},
+            new NavItem { Id = ProfitLoss, Href = "/month", IconName = IconName.PieChart, Text = "P&L"},
+            new NavItem { Id = "31", ParentId = ProfitLoss, Href = "/month", IconName = IconName.CalendarMonth, Text = "Monthly View"},
+            new NavItem { Id = "32", ParentId = ProfitLoss, Href = "/quarter", IconName = IconName.CalendarRange, Text = "Quarterly View"},
+            new NavItem { Id = "33", ParentId = ProfitLoss, Href = "/custom", IconName = IconName.CalendarHeart, Text = "Custom Dates"},
+            new NavItem { Id = RulesAndCategories, Href = "/categories", IconName = IconName.WrenchAdjustableCircle, Text = "Config"},
+            new NavItem { Id = "4", ParentId = RulesAndCategories, Href = "/categories", IconName = IconName.Tags, Text = "Categories"},
+            new NavItem { Id = "5", ParentId = RulesAndCategories, Href = "/rules", IconName = IconName.Forward, Text = "Rules"},
+            new NavItem { Id = Experimental, IconName = IconName.Radioactive, Text = "Experimental"},
+            new NavItem { Id = "2", ParentId = Experimental, Href = "/alltransactions", IconName = IconName.ListColumns, Text = "All Transactions"},
+
+
         };
         return navItems;
     }
