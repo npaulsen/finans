@@ -3,31 +3,25 @@
     <span>no data.</span>
 }
 else {
-   <table class="table">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th># Transactions</th>
-                <th>Balance</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var group in GroupedTransactions)
-            {
-                <tr>
-                    <td><CategorySpan Name="@group.Key" /></td>
-                    <td>@group.Count()</td>
-                    <td>@group.Sum(t => t.Amount)</td> 
-                </tr>
-            }
-        </tbody>
-    </table>
+    <Accordion>
     @foreach (var group in GroupedTransactions)
     {
         var transactions = group.ToArray();
-        <h3><CategorySpan Name=@group.Key /></h3>
-        <TransactionTable Transactions="@transactions"></TransactionTable>
+        <AccordionItem>
+            <TitleTemplate>
+                <CategorySpan Name=@group.Key />
+                &nbsp; 
+                &nbsp;<span class="badge bg-info rounded-pill">@transactions.Count()</span>
+                &nbsp;@transactions.Sum(t => t.Amount)
+            </TitleTemplate>
+            <Content>
+                <div class="accordion-body">
+                    <TransactionTable Transactions="@transactions" />
+                </div>
+            </Content>
+        </AccordionItem>
     }
+    </Accordion>
 }
 
 @code {
