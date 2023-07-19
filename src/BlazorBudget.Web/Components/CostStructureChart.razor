@@ -1,0 +1,72 @@
+@using BlazorBootstrap.Extensions
+@using Color = System.Drawing.Color
+
+<h3 class="text-center">@Title</h3>
+<PieChart @ref="pieChart" Width="400" Class="mb-4" />
+
+@code {
+    private PieChart pieChart;
+    private bool pieChartInitialized = false;
+
+    private ChartData chartData;
+    private PieChartOptions chartOptions;
+    private List<string> backgroundColors;
+
+    Random random = new Random(1);
+
+    [Parameter]
+    public List<(string Label, decimal Amount)>? Data { get; set; } = null;
+
+    [Parameter]
+    public string? Title { get; set; } = null;
+
+    protected override void OnInitialized()
+    {
+        // prepare background colors
+        PrepareBackgroundColors();
+
+        chartData = new ChartData();
+        chartOptions = new() { Responsive = true };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await pieChart.InitializeAsync(chartData, chartOptions);
+            pieChartInitialized = true;
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        chartData.Labels = Data.Select(item => item.Label).ToList();
+        chartData.Datasets = new() {
+            new PieChartDataset {
+                Data = Data.Select(item => (double)item.Amount).ToList(),
+                BackgroundColor = backgroundColors.Take(6).ToList(),
+            }
+        };
+        if (pieChartInitialized)
+        {
+            await pieChart.UpdateAsync(chartData, chartOptions);
+        }
+    }
+
+    private void PrepareBackgroundColors()
+    {
+        if (backgroundColors is null)
+        {
+            backgroundColors = new List<string>();
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+            backgroundColors.Add(GetRandomColor().ToRgbString());
+        }
+    }
+
+    private Color GetRandomColor() => Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
+}
