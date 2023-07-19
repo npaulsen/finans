@@ -5,12 +5,12 @@
 <PieChart @ref="pieChart" Width="400" Class="mb-4" />
 
 @code {
-    private PieChart pieChart;
+    private PieChart? pieChart;
     private bool pieChartInitialized = false;
 
-    private ChartData chartData;
-    private PieChartOptions chartOptions;
-    private List<string> backgroundColors;
+    private ChartData chartData = new ChartData();
+    private PieChartOptions chartOptions = new() { Responsive = true };
+    private List<string>? backgroundColors;
 
     Random random = new Random(1);
 
@@ -24,16 +24,13 @@
     {
         // prepare background colors
         PrepareBackgroundColors();
-
-        chartData = new ChartData();
-        chartOptions = new() { Responsive = true };
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && pieChart is not null)
         {
-            await pieChart.InitializeAsync(chartData, chartOptions);
+            await pieChart.InitializeAsync(chartData!, chartOptions!);
             pieChartInitialized = true;
         }
         await base.OnAfterRenderAsync(firstRender);
@@ -41,17 +38,21 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        chartData.Labels = Data.Select(item => item.Label).ToList();
-        chartData.Datasets = new() {
-            new PieChartDataset {
-                Data = Data.Select(item => (double)item.Amount).ToList(),
-                BackgroundColor = backgroundColors.Take(6).ToList(),
-            }
-        };
-        if (pieChartInitialized)
+        if (Data is not null)
         {
-            await pieChart.UpdateAsync(chartData, chartOptions);
+            chartData.Labels = Data.Select(item => item.Label).ToList();
+            chartData.Datasets = new() {
+                new PieChartDataset {
+                    Data = Data.Select(item => (double)item.Amount).ToList(),
+                    BackgroundColor = backgroundColors!.Take(6).ToList(),
+                }
+            };
+            if (pieChartInitialized)
+            {
+                await pieChart.UpdateAsync(chartData, chartOptions);
+            }
         }
+        await base.OnParametersSetAsync();
     }
 
     private void PrepareBackgroundColors()

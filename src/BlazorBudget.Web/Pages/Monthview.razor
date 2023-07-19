@@ -1,10 +1,5 @@
 ﻿@page "/month"
-@using BlazorBudget.Web.Data
 @using Microsoft.Extensions.Logging
-@using BlazorBootstrap.Extensions
-@using Color = System.Drawing.Color
-@inject TransactionService TransactionService
-@inject ClassificationService ClassificationService
 @inject ILogger<Monthview> Logger
 
 <PageTitle>@title</PageTitle>
@@ -25,89 +20,29 @@
             </Button>
         </div>
     </div>
-    @if (transactionsInPeriod is null || categorizedTransactions is null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <div class="row">
-            <div class="col">
-                <CostStructureChart Data=expenses Title="Expenses" />
-            </div>
-            <div class="col">
-                <CostStructureChart Data=incomes Title="Income" />
-            </div>
-        </div>
-
-        <GroupedTransactionTable GroupedTransactions=categorizedTransactions />
-    }
+    <ProfitLossContainer FirstDate=firstDate LastDate=lastDate />
 </div>
 
 @code {
-    private DateOnly endDate;
+    private DateOnly firstDate;
+    private DateOnly lastDate;
     private string title = "Monthly View";
 
-    private Transaction[]? allTransactions;
-    private ClassificationRule[] allRules = Array.Empty<ClassificationRule>();
-
-    private Transaction[]? transactionsInPeriod;
-    private Lookup<string, Transaction>? categorizedTransactions;
-
-    private List<(string Label, decimal Amount)>? expenses = new() {("Test", 23)};
-    private List<(string Label, decimal Amount)>? incomes = new() {("Test", 23)};
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        allTransactions = await TransactionService.GetTransactionsAsync();
-        allRules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
-
         var now = DateTime.Now;
-        await AdjustToPeriod(new DateOnly(now.Year, now.Month, 1));
+        AdjustToPeriod(new DateOnly(now.Year, now.Month, 1));
     }
 
-    private Task NextMonth() => AdjustToPeriod(endDate.AddMonths(1));
-    private Task PreviousMonth() => AdjustToPeriod(endDate.AddMonths(-1));
+    private void NextMonth() => AdjustToPeriod(firstDate.AddMonths(1));
+    private void PreviousMonth() => AdjustToPeriod(firstDate.AddMonths(-1));
 
-    private Task AdjustToPeriod(DateOnly newEndDate)
+    private void AdjustToPeriod(DateOnly newFirstDate)
     {
-        Logger.LogInformation("Adjusting to display month before {endDate}", newEndDate);
+        Logger.LogInformation("Adjusting to display month of {newFirstDate}", newFirstDate);
 
-        endDate = newEndDate;
-        var startDate = endDate.AddMonths(-1);
-
-        if (allTransactions is not null)
-        {
-            transactionsInPeriod = allTransactions
-                .Where(t => t.Date >= startDate && t.Date < endDate)
-                .ToArray();
-
-            categorizedTransactions = (Lookup<string, Transaction>)transactionsInPeriod
-                .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory);
-
-            var categoryTotals = categorizedTransactions
-                .Select(grouping => (grouping.Key + $" ({grouping.Count()}x)", grouping.Sum(t => t.Amount)))
-                .ToList();
-
-            expenses = categoryTotals
-                .Where(tuple => tuple.Item2 <= 0)
-                .ToList();
-
-            incomes = categoryTotals
-                .Where(tuple => tuple.Item2 > 0)
-                .ToList();
-
-            var delta = categoryTotals.Sum(total => total.Item2);
-            if (delta < 0)
-            {
-                incomes.Add(("Gap 👎", delta));
-            } else if (delta > 0)
-            {
-                expenses.Add(("Surplus 🙌", delta));
-            }
-        }
-
-        title = $"💰 {startDate:MMM yyyy}";
-        return Task.CompletedTask;
+        firstDate = newFirstDate;
+        lastDate = firstDate.AddMonths(1).AddDays(-1);
+        title = $"💰 {firstDate:MMM yyyy}";
     }
 }

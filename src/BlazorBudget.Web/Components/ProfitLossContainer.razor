@@ -1,0 +1,48 @@
+@using BlazorBudget.Web.Data
+@inject TransactionService TransactionService
+@inject ClassificationService ClassificationService
+@using Microsoft.Extensions.Logging
+@inject ILogger<ProfitLossContainer> Logger
+
+<ProfitLossView GroupedTransactions=groupedTransactions />
+
+@code {
+    private Transaction[]? allTransactions;
+    private ClassificationRule[] allRules = Array.Empty<ClassificationRule>();
+
+    private Lookup<string, Transaction>? groupedTransactions;
+
+    [Parameter]
+    public DateOnly? FirstDate { get; set; }
+
+    [Parameter]
+    public DateOnly? LastDate { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        allTransactions = await TransactionService.GetTransactionsAsync();
+        allRules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
+
+        AdjustToPeriodChange();
+    }
+
+    protected void AdjustToPeriodChange()
+    {
+        Logger.LogInformation("adjusting to a period change");
+        if (allTransactions is not null && FirstDate is not null && LastDate is not null)
+        {
+            var transactionsInPeriod = allTransactions
+                .Where(t => t.Date >= FirstDate && t.Date <= LastDate)
+                .ToArray();
+
+            groupedTransactions = (Lookup<string, Transaction>)transactionsInPeriod
+                .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory);
+        }
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        AdjustToPeriodChange();
+    }
+}

@@ -1,0 +1,50 @@
+
+<div class="row">
+    <div class="col">
+        <CostStructureChart Data=expenses Title="Expenses" />
+    </div>
+    <div class="col">
+        <CostStructureChart Data=incomes Title="Income" />
+    </div>
+</div>
+
+<GroupedTransactionTable GroupedTransactions=GroupedTransactions />
+
+
+@code {
+    [Parameter]
+    public Lookup<string, Transaction>? GroupedTransactions { get; set; } = null;
+
+    private List<(string Label, decimal Amount)>? expenses;
+    private List<(string Label, decimal Amount)>? incomes;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (GroupedTransactions is null)
+        {
+            return;
+        }
+
+        var categoryTotals = GroupedTransactions
+            .Select(grouping => (grouping.Key + $" ({grouping.Count()}x)", grouping.Sum(t => t.Amount)))
+            .ToList();
+
+        expenses = categoryTotals
+            .Where(tuple => tuple.Item2 <= 0)
+            .ToList();
+
+        incomes = categoryTotals
+            .Where(tuple => tuple.Item2 > 0)
+            .ToList();
+
+        var delta = categoryTotals.Sum(total => total.Item2);
+        if (delta < 0)
+        {
+            incomes.Add(("Gap 👎", delta));
+        } else if (delta > 0)
+        {
+            expenses.Add(("Surplus 🙌", delta));
+        }
+    }
+}
