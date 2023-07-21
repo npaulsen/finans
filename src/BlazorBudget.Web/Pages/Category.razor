@@ -1,0 +1,31 @@
+﻿@page "/categories/{categoryName}"
+@using BlazorBudget.Web.Data
+@using Microsoft.Extensions.Logging
+@inject TransactionService TransactionService
+@inject ClassificationService ClassificationService
+@inject ILogger<Categories> Logger
+
+<PageTitle>@CategoryName</PageTitle>
+
+<h2><CategorySpan Name=@CategoryName /></h2>
+
+<TransactionTable Transactions=categoryTransactions />
+
+@code {
+    private Transaction[]? categoryTransactions;
+    private ClassificationRule[] rules = Array.Empty<ClassificationRule>();
+
+    [Parameter]
+    public string CategoryName {get;set;} = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allTransactions = await TransactionService.GetTransactionsAsync();
+        var allRules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
+
+        rules = allRules.Where(r => r.TargetCategory == CategoryName).ToArray();
+
+        categoryTransactions = allTransactions.Where(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory == CategoryName).ToArray();
+
+    }
+}
