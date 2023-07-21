@@ -35,7 +35,8 @@
         {
             new NavItem { Id = "1", Href = "/", IconName = IconName.HouseDoorFill, Text = "Home", Match=NavLinkMatch.All},
             new NavItem { Id = Data, Href = "/import", IconName = IconName.DatabaseCheck, Text = "Data"},
-            new NavItem { Id = "2", ParentId = Data, Href = "/alltransactions", IconName = IconName.ListColumns, Text = "All Transactions"},
+            new NavItem { Id = "transactions", ParentId = Data, Href = "/transactions", IconName = IconName.ListColumns, Text = "Transactions"},
+            new NavItem { Id = "findtransactions", ParentId = Data, Href = "/findtransactions", IconName = IconName.Search, Text = "Find Transactions"},
             new NavItem { Id = "Import", ParentId = Data, Href = "/import", IconName = IconName.FileEarmarkPlus, Text = "Import"},
             new NavItem { Id = ProfitLoss, Href = "/month", IconName = IconName.PieChart, Text = "P&L"},
             new NavItem { Id = "31", ParentId = ProfitLoss, Href = "/month", IconName = IconName.CalendarMonth, Text = "Monthly View"},

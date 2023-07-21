@@ -1,0 +1,66 @@
+﻿@page "/transactions"
+@using BlazorBudget.Web.Data
+@using Microsoft.Extensions.Logging
+@inject TransactionService TransactionService
+@inject ILogger<TransactionsOverview> Logger
+
+<PageTitle>Transactions</PageTitle>
+
+<h1>All Transactions</h1>
+
+<ConfirmDialog @ref="dialog" />
+<Button Color=ButtonColor.Danger @onclick=ShowConfirmationAsync >
+    <Icon Name="IconName.FolderX" /> Reset transactions
+</Button>
+<Button Color=ButtonColor.Primary @onclick=ReloadDefaultsAsync >
+    <Icon Name="IconName.FolderSymlink" /> Load Sample Data
+</Button>
+
+<div class="row">
+    <p />
+    @if(allTransactions.Any())
+    {
+        <p>There are currently @allTransactions.Length transactions.</p>
+        <p>The earliest is from @allTransactions.First().Date, the latest from @allTransactions.Last().Date.</p>
+    } 
+    else 
+    {
+        <p>There are currently <b>no transactions</b>.</p>
+
+    }
+</div>
+
+@code {
+    private Transaction[]? allTransactions;
+
+    private ConfirmDialog dialog = default!;
+
+    private async Task ShowConfirmationAsync()
+    {
+        var confirmation = await dialog.ShowAsync(
+            title: "Please confirm",
+            message1: "This will delete all imported transactions.",
+            message2: "Do you want to proceed?");
+
+        if (confirmation)
+        {
+            await TransactionService.ClearAllTransactionsAsync();
+            Refresh();
+        }
+    }
+
+    private async Task ReloadDefaultsAsync()
+    {
+        await TransactionService.LoadPresetsAsync();
+        Refresh();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    protected async Task Refresh() {
+        allTransactions = await TransactionService.GetTransactionsAsync();
+    }
+}

@@ -2,39 +2,30 @@
 @using BlazorBudget.Web.Data
 @using Microsoft.Extensions.Logging
 @inject TransactionService TransactionService
-@inject ILogger<AllTransactions> Logger
+@inject ILogger<Import> Logger
 
 <PageTitle>Import</PageTitle>
 
 <h1>Import</h1>
-
-<ConfirmDialog @ref="dialog" />
-<Button Color=ButtonColor.Danger @onclick=ShowConfirmationAsync >
-    <Icon Name="IconName.FolderX" /> Reset transactions
-</Button>
-<Button Color=ButtonColor.Primary @onclick=ReloadDefaultsAsync >
-    <Icon Name="IconName.FolderSymlink" /> Load Sample Data
-</Button>
+<Tabs EnableFadeEffect="true" NavStyle="NavStyle.Pills">
+    <Tab Title="Choose File" IsActive="true">
+        <Content>
+            <p class="mt-3">This is the placeholder content for the <b>File</b> tab.</p>
+        </Content>
+    </Tab>
+    <Tab Title="Configure">
+        <Content>
+            <p class="mt-3">This is the placeholder content for the <b>Configure Input</b> tab.</p>
+        </Content>
+    </Tab>
+    <Tab Title="Import">
+        <Content>
+            <p class="mt-3">This is the placeholder content for the <b>Import</b> tab.</p>
+        </Content>
+    </Tab>
+</Tabs>
 
 @code {
 
-    private ConfirmDialog dialog = default!;
-
-    private async Task ShowConfirmationAsync()
-    {
-        var confirmation = await dialog.ShowAsync(
-            title: "Please confirm",
-            message1: "This will delete all imported transactions.",
-            message2: "Do you want to proceed?");
-
-        if (confirmation)
-        {
-            await TransactionService.ClearAllTransactionsAsync();
-        }
-    }
-
-    private async Task ReloadDefaultsAsync()
-    {
-        await TransactionService.LoadPresetsAsync();
-    }
+   
 }

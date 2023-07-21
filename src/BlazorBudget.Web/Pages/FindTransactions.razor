@@ -1,12 +1,12 @@
-﻿@page "/alltransactions"
+﻿@page "/findtransactions"
 @using BlazorBudget.Web.Data
 @using Microsoft.Extensions.Logging
 @inject TransactionService TransactionService
-@inject ILogger<AllTransactions> Logger
+@inject ILogger<FindTransactions> Logger
 
 <PageTitle>Transactions</PageTitle>
 
-<h1>Transaction Overview</h1>
+<h1>Find Transactions</h1>
 
 
 <EditForm Model="@filter" OnSubmit="@ApplySelectedFilters">
@@ -45,7 +45,7 @@ else
 
     private void ApplySelectedFilters()
     {
-        Logger.LogInformation("Applying seleceted filters: {0}", filter);
+        Logger.LogInformation("Applying selected filters: {0}", filter);
 
         if (allTransactions is not null)
             filteredTransactions = allTransactions.Where(filter.Matches).ToArray();
