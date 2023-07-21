@@ -8,8 +8,33 @@
 
 <h1>Import</h1>
 
-<Button Color=ButtonColor.Primary><Icon Name="IconName.FolderSymlink" /> Refresh</Button>
+<ConfirmDialog @ref="dialog" />
+<Button Color=ButtonColor.Danger @onclick=ShowConfirmationAsync >
+    <Icon Name="IconName.FolderX" /> Reset transactions
+</Button>
+<Button Color=ButtonColor.Primary @onclick=ReloadDefaultsAsync >
+    <Icon Name="IconName.FolderSymlink" /> Load Sample Data
+</Button>
 
 @code {
 
+    private ConfirmDialog dialog = default!;
+
+    private async Task ShowConfirmationAsync()
+    {
+        var confirmation = await dialog.ShowAsync(
+            title: "Please confirm",
+            message1: "This will delete all imported transactions.",
+            message2: "Do you want to proceed?");
+
+        if (confirmation)
+        {
+            await TransactionService.ClearAllTransactionsAsync();
+        }
+    }
+
+    private async Task ReloadDefaultsAsync()
+    {
+        await TransactionService.LoadPresetsAsync();
+    }
 }
