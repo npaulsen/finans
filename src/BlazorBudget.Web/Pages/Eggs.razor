@@ -1,0 +1,28 @@
+﻿@page "/eggs"
+
+<PageTitle>Han$ Finan$</PageTitle>
+
+<h1>Hanz Finans</h1>
+
+<h1>
+@foreach(var (clicked, eggIndex) in eggs.Select((egg,index) => (egg,index)))
+{
+    if (clicked) {
+        if (eggIndex == secretEgg) {
+            <Icon Color="IconColor.Primary" Name=IconName.Peace />
+        } else
+        {
+            <Icon Color="IconColor.Warning" Name=IconName.EggFried />
+        }
+    } else {
+        <Icon Color="IconColor.Secondary" Name=IconName.EggFill @onclick="() => eggs[eggIndex]=true" />
+    }
+}
+</h1>
+
+@code {
+    private const int numEggs = 365;
+    private bool[] eggs = Enumerable.Range(0,numEggs).Select(_ => false).ToArray();
+    private int secretEgg = new Random().Next(numEggs);
+
+}

@@ -1,0 +1,63 @@
+﻿@page "/trends"
+@using BlazorBudget.Web.Data
+@inject TransactionService TransactionService
+@inject ClassificationService ClassificationService
+@using Microsoft.Extensions.Logging
+@inject ILogger<Monthview> Logger
+
+<PageTitle>Trends</PageTitle>
+
+<div class="container">
+    <LineChart @ref="lineChart" Width="600" Class="mb-4" />
+</div>
+
+@code {
+    private LineChart? lineChart;
+    
+
+    private ChartData chartData = new ChartData();
+    private LineChartOptions chartOptions = new LineChartOptions 
+    { 
+        Responsive = true,
+        Interaction = new () { Mode = InteractionMode.Index }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allTransactions = await TransactionService.GetTransactionsAsync();
+        var allRules = await ClassificationService.GetAllRulesAsync() ?? Array.Empty<ClassificationRule>();
+
+        
+       var groupedTransactions = (Lookup<string, Transaction>)allTransactions
+            .ToLookup(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory);
+            
+
+        var now = DateTime.Now;
+        var thisMonth = new DateOnly(now.Year, now.Month, 1);
+        var last12Months = Enumerable.Range(0, 12).Select(i => thisMonth.AddMonths(-11+i)).ToList();
+
+        chartData = new ChartData
+        {
+            Labels = last12Months.Select(date => date.ToString("MMM yy")).ToList(),
+            Datasets = groupedTransactions.Select(group => new LineChartDataset()
+            {
+                Label = group.Key,
+                Data = last12Months
+                    .Select(date => group
+                        .Where(t => t.Date >= date && t.Date < date.AddMonths(1))
+                        .Sum(t => (double)t.Amount))
+                    .ToList(),
+                BorderWidth = new List<double> { 2 },
+                HoverBorderWidth = new List<double> { 4 },
+                PointRadius = new List<int> { 0 }, // hide points
+                PointHoverRadius = new List<int> { 4 },
+            }).Cast<IChartDataset>().ToList(),
+        };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await lineChart!.UpdateAsync(chartData, chartOptions);
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

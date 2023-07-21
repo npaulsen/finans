@@ -4,17 +4,9 @@
 
 <h1>Hanz Finans</h1>
 
-<h1>
-@foreach(var (egg, eggIndex) in eggs.Select((egg,index) => (egg,index)))
-{
-    var icon = egg? eggIndex == secretEgg? IconName.Peace : IconName.EggFried : IconName.EggFill;
-    <Icon Color="IconColor.Secondary" Name=icon @onclick="() => eggs[eggIndex]=true" />
-}
-</h1>
+
 
 @code {
-    private const int numEggs = 365;
-    private bool[] eggs = Enumerable.Range(0,numEggs).Select(_ => false).ToArray();
-    private int secretEgg = new Random().Next(numEggs);
+
 
 }
