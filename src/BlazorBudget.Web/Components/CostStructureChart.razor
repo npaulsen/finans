@@ -1,6 +1,3 @@
-@using BlazorBootstrap.Extensions
-@using Color = System.Drawing.Color
-
 <h3 class="text-center">@Title</h3>
 <PieChart @ref="pieChart" Width="400" Class="mb-4" />
 
@@ -10,21 +7,12 @@
 
     private ChartData chartData = new ChartData();
     private PieChartOptions chartOptions = new() { Responsive = true };
-    private List<string>? backgroundColors;
-
-    Random random = new Random(1);
 
     [Parameter]
     public List<(string Label, decimal Amount)>? Data { get; set; } = null;
 
     [Parameter]
     public string? Title { get; set; } = null;
-
-    protected override void OnInitialized()
-    {
-        // prepare background colors
-        PrepareBackgroundColors();
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -44,7 +32,6 @@
             chartData.Datasets = new() {
                 new PieChartDataset {
                     Data = Data.Select(item => (double)item.Amount).ToList(),
-                    BackgroundColor = backgroundColors!.Take(6).ToList(),
                 }
             };
             if (pieChartInitialized)
@@ -54,20 +41,4 @@
         }
         await base.OnParametersSetAsync();
     }
-
-    private void PrepareBackgroundColors()
-    {
-        if (backgroundColors is null)
-        {
-            backgroundColors = new List<string>();
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-            backgroundColors.Add(GetRandomColor().ToRgbString());
-        }
-    }
-
-    private Color GetRandomColor() => Color.FromArgb(random.Next(256), random.Next(256), random.Next(256));
 }
