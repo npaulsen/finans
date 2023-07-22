@@ -1,32 +1,39 @@
 ﻿@page "/import"
 @using BlazorBudget.Web.Data
+@using System.Text
 @using Microsoft.Extensions.Logging
 @using System.Globalization;
 @inject TransactionService TransactionService
 @inject ILogger<Import> Logger
+@inject NavigationManager Navigation
+
 
 <PageTitle>Import</PageTitle>
 
 <h1>Import</h1>
+<ConfirmDialog @ref="dialog" />
 <Tabs @ref="tabs" EnableFadeEffect>
     <Tab Title="Choose File" IsActive="true">
         <Content>
-            <InputFile OnChange=LoadFile />
+            <div class="mt-3">
+                <label for="formFile" class="form-label">Choose a CSV file to be imported</label>
+                <InputFile @key=@(_inputFileId) class="form-control" OnChange=LoadFile />
+            </div>
         </Content>
     </Tab>
-    <Tab Title="Configure" Disabled=@(lines is null)>
+    <Tab Title="Find Headers" Disabled=@(lines is null)>
         <Content>
             <div class="row">
                 <div class="col-4">
                     <div class="d-grid gap-2 col-6 mx-auto mt-2">
-                        <Button Color=ButtonColor.Primary @onclick=AutoDetect Disabled=@(lines is null)>
+                        <Button Color=ButtonColor.Info @onclick=AutoDetect Disabled=@(lines is null)>
                             <Icon Name="IconName.Lightning" /> Auto-detect
                         </Button>
                     </div>
                     <div class="form-row">
                         <div class="mb-3">
                             <label>Separator:</label>
-                            <select class="form-control mt-2" @bind="separator">
+                            <select class="form-control mt-2" @bind="Separator" >
                                 @foreach (var (name, sep) in possibleSeparators)
                                 {
                                     <option value="@sep"> @name </option>
@@ -35,10 +42,20 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Headers in Line:</label>
-                            <NumberInput TValue="int" @bind-Value="@headersInLineNumber" EnableMinMax="true" Min="1" Max="@(lines?.Count??100)" Placeholder="Enter amount" />
+                            <NumberInput TValue="int" @bind-Value="@HeadersInLineNumber" EnableMinMax="true" Min="1" Max="@(lines?.Count??100)" Placeholder="Enter amount" />
                             <span class="form-text">You may also click on that line in the preview.</span>
                         </div>
                     </div>
+
+                    <div class="d-grid gap-2 col-6 mx-auto mt-2 @(headersError is null?"":"is-invalid")">
+                        <Button Color=ButtonColor.Primary @onclick=HeadersConfirmed Disabled=@(headersError is not null)>
+                            <Icon Name="IconName.ArrowRightSquare" /> Continue
+                        </Button>
+                    </div>
+                    @if (headersError is not null)
+                    {
+                        <div class="invalid-feedback text-center">@headersError</div>
+                    }
                 </div>
                 <div class="col-8">
                     <h3> Preview </h3>
@@ -51,22 +68,26 @@
                         <ul class="list-group overflow-auto text-break" style="max-height: 500px;">
                         @foreach (var (line, index) in lines.Select((l, i) => (l, i)))
                         {
-                            if (index == headersInLineNumber - 1)
+                            if (index == HeadersInLineNumber - 1)
                             {
-                                var parser = new System.Text.RegularExpressions.Regex($"{separator}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-                                <li class="list-group-item list-group-item-info text-wrap">
+                                var classType = headersError is null? "info" : "danger";
+                                <li class="list-group-item list-group-item-@classType text-wrap">
                                     <Icon Name=IconName.Tag class="m-1"/>
-                                    
-                                    @foreach(var header in parser.Split(lines[headersInLineNumber - 1]))
-                                    {
-                                        <span class="badge bg-info m-1">@header</span>
+                                    @if(splitHeaders is not null) {
+                                        foreach(var header in splitHeaders)  
+                                        {
+                                            <span class="badge bg-@classType m-1">@header</span>
+                                        }
+                                    } else {
+                                        @line
                                     }
+                                    
                                 </li>
                             } else {
-                                var isData = index >= headersInLineNumber;
+                                var isData = index >= HeadersInLineNumber;
                                 var iconName = isData? IconName.DatabaseUp : IconName.EyeSlash;
                                 var additionalClass = isData? "" : "text-decoration-line-through text-secondary";
-                                <li class="list-group-item list-group-item-action @additionalClass small" @onclick="() => headersInLineNumber = index + 1" >
+                                <li class="list-group-item list-group-item-action @additionalClass small" @onclick="() => HeadersInLineNumber = index + 1" >
                                     <Icon Name=iconName class="m-1"/>
                                     @line
                                 </li>
@@ -76,14 +97,160 @@
                     }
                 </div>
             </div>
-            
-
-            
+        </Content>
+    </Tab>
+    <Tab Title="Match Columns" Disabled=@(headersError is not null)>
+        <Content>
+            @if (splitHeaders is null || splitExampleRows is null)
+            {
+                <p class="mt-3">No headers parsed yet.</p>
+            } 
+            else
+            {
+            <p class="mt-3">Now we need to find the right columns for importing the data.</p>
+            <div class="row">
+                <div class="col-8">
+                    <div class="form-row">
+                        <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                            <Button Color=ButtonColor.Primary @onclick=PrepareImport Disabled=AnyMappingsMissingForImport >
+                                <Icon Name="IconName.Check" /> Done
+                            </Button>
+                        </div>
+                        <div class="mb-3">
+                            <label>Date:</label>
+                            <select class="form-control mt-2" @bind="columnIndexDate" >
+                                <option value="">Please choose</option>
+                                @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
+                                {
+                                    <option value="@index">Column @(index+1) – "@header"</option>
+                                }
+                            </select>
+                            <label>Date format:</label>
+                            <select class="form-control mt-2" @bind="columnDateFormatString" >
+                                <option value="">Please choose</option>
+                                @foreach (var dateFormat in PossibleDateStringFormats)
+                                {
+                                    <option value="@dateFormat">@dateFormat</option>
+                                }
+                            </select>
+                            @if(columnIndexDate is null || columnDateFormatString is null){
+                                <p> Choose!</p>
+                            } else {
+                                <span class="badge bg-info">@splitHeaders[columnIndexDate.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexDate.Value]))
+                                {
+                                    DateOnly parsedDate;
+                                    var dateParsingOk = DateOnly.TryParseExact(rawValue, columnDateFormatString, out parsedDate);
+                                    @if(dateParsingOk){
+                                        <span class="badge bg-success">@parsedDate</span>
+                                    } else {
+                                        <span class="badge bg-danger">@rawValue</span>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label>Recipient:</label>
+                            <select class="form-control mt-2" @bind="columnIndexRecipient" >
+                                <option value="">Please choose</option>
+                                @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
+                                {
+                                    <option value="@index">Column @(index+1) – "@header"</option>
+                                }
+                            </select>
+                            @if(columnIndexRecipient is null){
+                                <p> Choose!</p>
+                            } else {
+                                <span class="badge bg-info">@splitHeaders[columnIndexRecipient.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexRecipient.Value]))
+                                {
+                                    @if(!string.IsNullOrWhiteSpace(rawValue)){
+                                        <span class="badge bg-success">@rawValue</span>
+                                    } else {
+                                        <span class="badge bg-danger">No value!</span>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label>Reference:</label>
+                            <select class="form-control mt-2" @bind="columnIndexReference" >
+                                <option value="">Please choose</option>
+                                @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
+                                {
+                                    <option value="@index">Column @(index+1) – "@header"</option>
+                                }
+                            </select>
+                            @if(columnIndexReference is null){
+                                <p> Choose!</p>
+                            } else {
+                                <span class="badge bg-info">@splitHeaders[columnIndexReference.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexReference.Value]))
+                                {
+                                    @if(!string.IsNullOrWhiteSpace(rawValue)){
+                                        <span class="badge bg-success">@rawValue</span>
+                                    } else {
+                                        <span class="badge bg-danger">No value!</span>
+                                    }
+                                }
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label>Amount:</label>
+                            <select class="form-control mt-2" @bind="columnIndexAmount" >
+                                <option value="">Please choose</option>
+                                @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
+                                {
+                                    <option value="@index">Column @(index+1) – "@header"</option>
+                                }
+                            </select>
+                            <label>Number format:</label>
+                            <select class="form-control mt-2" @bind="columnAmountCulture" >
+                                <option value="">Please choose</option>
+                                @foreach (var cultureInfo in PossibleCultureFormats)
+                                {
+                                    <option value="@cultureInfo">@cultureInfo</option>
+                                }
+                            </select>
+                            @if(columnIndexAmount is null || columnAmountCulture is null){
+                                <p> Choose!</p>
+                            } else {
+                                <span class="badge bg-info">@splitHeaders[columnIndexAmount.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexAmount.Value]))
+                                {
+                                    var culture = CultureInfo.CreateSpecificCulture(columnAmountCulture);
+                                    var numberParsingOk = decimal.TryParse(rawValue, culture, out var parsedAmount);
+                                    @if(numberParsingOk){
+                                        <span class="badge bg-success">@parsedAmount</span>
+                                    } else {
+                                        <span class="badge bg-danger">@rawValue</span>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
         </Content>
     </Tab>
     <Tab Title="Import" Disabled=@(parsedTransactions is null)>
         <Content>
-            <p class="mt-3">This is the placeholder content for the <b>Import</b> tab.</p>
+            @if (parsedTransactions is not null){
+                if (firstLineFailingParsing is not null) {
+                    <p class="mt-3"><b>@failsDuringParsing<b> line(s) could not be parsed into transactions.</p>                   
+                    <p class="mt-3">The first one was:</p>
+                    <p class="text-monospace">@firstLineFailingParsing</p>
+                } else {
+                    <p class="mt-3"><b>All</b> lines parsed successfully.</p>
+                }
+                 <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                    <Button Color=ButtonColor.Primary @onclick=DoImport Disabled=AnyMappingsMissingForImport >
+                        <Icon Name="IconName.FileEarmarkPlus" /> Save shown transactions
+                    </Button>
+                </div>
+                <TransactionTable Transactions=parsedTransactions />
+            }
         </Content>
     </Tab>
 </Tabs>
@@ -93,13 +260,26 @@
     const int MaxLines = 20000;
     const int PeekLines = 50;
 
-    Tabs tabs = default!;
+    private Tabs tabs = default!;
+    private ConfirmDialog dialog = default!;
+
 
     // File.
+    private IBrowserFile file;
+    private string _inputFileId = Guid.NewGuid().ToString();
     private List<string>? lines;
     
     // Config.
-    private string separator = ";";
+    private CsvLineSplitter _splitter = new (",");
+    public string Separator 
+    {
+        get => _splitter.Separator;
+        set
+        {
+            _splitter = new CsvLineSplitter(value);
+            FormatInfoChanged();
+        }
+    }
     private List<(string Name, string Separator)> possibleSeparators = new () {
         ("Comma", ","),
         ("Semicolon", ";"),
@@ -107,20 +287,49 @@
         ("Space", " "),
     };
     private int headersInLineNumber = 1;
+    public int HeadersInLineNumber
+    {
+        get => headersInLineNumber;
+        set
+        {
+            headersInLineNumber = value;
+            FormatInfoChanged();
+        }
+    }
 
-    // Final.
+    public string? headersError = "no data";
+    private string[]? splitHeaders = null;
+
+    // Column Mapping.
+    private string[][]? splitExampleRows = null;
+    private int? columnIndexDate = null;
+    private string? columnDateFormatString;
+    private int? columnIndexRecipient;
+    private int? columnIndexReference;
+    private int? columnIndexType;
+    private int? columnIndexAmount;
+    private string? columnAmountCulture;
+
+    private string[] PossibleDateStringFormats = new[] {"dd.MM.yyyy","dd.MM.yy"};
+    private string[] PossibleCultureFormats = new[] {"de-DE", "en-US", "en-UK", ""};
+
     private CultureInfo Culture = CultureInfo.CreateSpecificCulture("de-DE");
-    private List<Transaction>? parsedTransactions = null;
+    private Transaction[]? parsedTransactions = null;
+    private int? failsDuringParsing;
+    private string? firstLineFailingParsing;
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         Logger.LogInformation("attempting to load file.");
+        headersError = "no data loaded";
         lines = null;
         parsedTransactions = null;
-        headersInLineNumber = 1;
+        HeadersInLineNumber = 1;
+        file = e.File;
         try
         {
             using var stream = e.File.OpenReadStream(MaxBytes);
+            // TODO guess encoding - or make configurable?
             using var reader = new StreamReader(stream);
             lines = new (PeekLines);
             for (int l = 0; l < PeekLines; l++)
@@ -133,6 +342,7 @@
                 lines.Add(line);
             }
             Logger.LogInformation("peeked {numLinesPeeked} lines.", lines.Count);
+            FormatInfoChanged();
             await tabs.ShowTabByIndexAsync(1);
         } catch (IOException exception) 
         {
@@ -140,11 +350,13 @@
         }
     }
 
-    private void AutoDetect() {
-        separator = ";";
+    private void AutoDetect() 
+    {
+        if (lines is null) {
+            return;
+        }
 
         var minimumMeaningfulLineLength = 30;
-
         var lastContentLine = lines.Count - 1;
         while (lastContentLine > 0 && lines[lastContentLine].Length < minimumMeaningfulLineLength)
         {
@@ -153,18 +365,183 @@
 
         // Guess the separator
         var contentLine = lines[lastContentLine];
-        separator = possibleSeparators.FirstOrDefault(sep => contentLine.Split(sep.Separator).Length >= 5).Separator ?? ";";
-
-        if (lastContentLine == 0) {
-            headersInLineNumber = 1;
-        } else {
-            headersInLineNumber = lastContentLine;
-            while (headersInLineNumber > 1 &&
-                lines[headersInLineNumber - 2].Length > minimumMeaningfulLineLength &&
-                lines[headersInLineNumber - 2].Split(separator).Length >= 5)
-            {
-                headersInLineNumber--;
+        foreach (var sep in possibleSeparators)
+        {
+            var testSplitter = new CsvLineSplitter(sep.Separator);
+            var splitData = testSplitter
+                .Split(contentLine)
+                .Select(s => !string.IsNullOrWhiteSpace(s))
+                .ToList();
+            if (splitData.Count >= 5){
+                _splitter = testSplitter;
+                break;
             }
+            // TODO could also check if the min number of non-empty cells in multiple lines is higher...
+        }
+        if (lastContentLine == 0) {
+            HeadersInLineNumber = 1;
+        } else {
+            HeadersInLineNumber = lastContentLine;
+            while (HeadersInLineNumber > 1 &&
+                lines[HeadersInLineNumber - 2].Length > minimumMeaningfulLineLength &&
+                _splitter
+                    .Split(lines[HeadersInLineNumber - 2])
+                    .Select(s => !string.IsNullOrWhiteSpace(s))
+                    .Count() >= 5)
+            {
+                HeadersInLineNumber--;
+            }
+        }
+    }
+
+    private void FormatInfoChanged()
+    {
+        splitHeaders = null;
+        splitExampleRows = null;
+        if (lines is null) {
+            Logger.LogInformation("Format info was changed, but no lines yet loaded.");
+            return;
+        }
+        Logger.LogInformation("Format info was changed: {headerRow}, {separator}",headersInLineNumber, Separator);
+        try {
+            if (lines.Count < HeadersInLineNumber)
+            {
+                headersError = $"Line {HeadersInLineNumber} is not present.";
+                return;
+            }
+            if (lines.Count == HeadersInLineNumber)
+            {
+                headersError = $"Headers cannot be in line {HeadersInLineNumber}, this is the last line.";
+                return;
+            }
+            var headersLine = lines[HeadersInLineNumber - 1];
+            var exampleContentLine = lines[HeadersInLineNumber];
+            splitHeaders = _splitter.Split(headersLine);
+            var minHeadersExpected = 5;
+            if (splitHeaders.Length < minHeadersExpected)
+            {
+                splitHeaders = null;
+                headersError = $"Not enough headers are present when splitting line #{HeadersInLineNumber} by {Separator}";
+                return;
+            }
+        } 
+        catch (Exception e)
+        {
+            Logger.LogError(e, "failed to update splitting of headers");
+            headersError = "error splitting headers line";
+            splitHeaders = null;
+        }
+        headersError = null;
+        Logger.LogInformation("No error splitting headers.");
+    }
+
+    private async Task HeadersConfirmed()
+    {
+        Logger.LogInformation("Headers confirmed");
+        splitExampleRows = lines!.Skip(HeadersInLineNumber).Take(3).Select(row => _splitter.Split(row)).ToArray();
+
+        // Attempt guessing the right columns:
+        columnIndexAmount = FindBestHeaderMatching("Betrag");
+        columnIndexDate = FindBestHeaderMatching("Valuta", "Wertstellung");
+        columnIndexRecipient = FindBestHeaderMatching("Auftraggeber");
+        columnIndexReference = FindBestHeaderMatching("Verwendungszweck");
+        columnIndexType = FindBestHeaderMatching("Buchungstext");
+
+        if (columnIndexAmount.HasValue && splitExampleRows.Any())
+        {
+            var raw = splitExampleRows[0][columnIndexAmount.Value];
+            if (decimal.TryParse(raw, CultureInfo.CreateSpecificCulture("de-DE"), out _))
+            {
+                columnAmountCulture = "de-DE";
+            } else if (decimal.TryParse(raw, CultureInfo.CreateSpecificCulture("en-US"), out _))
+            {
+                columnAmountCulture = "en-US";
+            }
+        }
+        if (columnIndexDate.HasValue && splitExampleRows.Any())
+        {
+            var raw = splitExampleRows[0][columnIndexDate.Value];
+            columnDateFormatString = PossibleDateStringFormats
+                .FirstOrDefault(format => DateOnly.TryParseExact(raw, format, out _));
+        }
+
+        await tabs.ShowTabByIndexAsync(2);
+    }
+
+    private int? FindBestHeaderMatching(params string[] matches)
+    {
+        var skipped = splitHeaders
+            .TakeWhile(h => !matches.Any(match => h.Contains(match, StringComparison.OrdinalIgnoreCase)))
+            .Count();
+        return skipped == splitHeaders.Length? null : skipped;
+    }
+
+    private bool AnyMappingsMissingForImport => columnIndexDate is null ||
+            columnAmountCulture is null ||
+            columnDateFormatString is null ||
+            columnIndexAmount is null ||
+            columnIndexRecipient is null ||
+            columnIndexReference is null;
+
+    private async Task PrepareImport()
+    {
+        if (AnyMappingsMissingForImport) {
+            Logger.LogWarning("Import not possible, not all mappings are defined!");
+            return;
+            }
+        Logger.LogInformation("Attempting import.");
+
+        var parsed = new List<Transaction>();
+        failsDuringParsing = 0;
+        firstLineFailingParsing = null;
+
+        var culture = CultureInfo.CreateSpecificCulture(columnAmountCulture);
+
+        using var stream = file.OpenReadStream(MaxBytes);
+        using var reader = new StreamReader(stream);
+        for (int l = 0; l < MaxLines; l++)
+        {
+            var line = await reader.ReadLineAsync();
+            if (line is null) break;
+            if (l < HeadersInLineNumber) continue;
+            
+            var cols = _splitter.Split(line);
+            try {
+                var date = DateOnly.ParseExact(cols[columnIndexDate.Value], columnDateFormatString);
+                var amount = decimal.Parse(cols[columnIndexAmount.Value], culture);
+                var type = "";
+                var recipient = cols[columnIndexRecipient.Value];
+                var reference = cols[columnIndexReference.Value];
+                parsed.Add(new (date, amount, type, reference, recipient));
+            } catch (Exception e) {
+                Logger.LogError(e, "error parsing transaction from line '{line}'", line);
+                failsDuringParsing++;
+                firstLineFailingParsing ??= line;
+            }
+        }
+
+        parsedTransactions = parsed.ToArray();
+        await tabs.ShowTabByIndexAsync(3);
+    }
+
+    private async Task DoImport()
+    {
+        await TransactionService.ImportAsync(parsedTransactions.ToList());
+        var confirmation = await dialog.ShowAsync(
+            title: "Data imported",
+            message1: parsedTransactions.Length + " transactions have been sent.",
+            message2: "Do you want to perform another import?");
+
+        if (confirmation)
+        {
+            parsedTransactions = null;
+            lines = null;
+            // https://stackoverflow.com/a/70877124
+            _inputFileId = Guid.NewGuid().ToString();
+
+            await tabs.ShowFirstTabAsync();
+        } else {
+            Navigation.NavigateTo("/transactions");
         }
     }
 }
