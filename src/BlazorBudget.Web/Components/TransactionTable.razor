@@ -3,30 +3,35 @@
     <span>no transactions.</span>
 }
 else {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Recipient</th>
-                <th>Reference</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transaction in Transactions)
-            {
-                <tr>
-                    <td>@transaction.Date</td>
-                    <td>@transaction.Recipient</td>
-                    <td>@transaction.Reference</td>
-                    <td>@transaction.Amount</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <Grid TItem="Transaction" 
+    Class="table table-hover" 
+    DataProvider="@(Req => Task.FromResult(Req.ApplyTo(Transactions)))" 
+    AllowPaging PageSize=PageSize
+    Responsive
+    @attributes=AdditionalAttributes>
+        <GridColumn TItem="Transaction" HeaderText="Date" PropertyName="Date" >
+            @context.Date
+        </GridColumn>
+        <GridColumn TItem="Transaction" HeaderText="Recipient" PropertyName="Recipient">
+            @context.Recipient
+        </GridColumn>
+        <GridColumn TItem="Transaction" HeaderText="Reference" PropertyName="Reference">
+            @context.Reference
+        </GridColumn>
+        <GridColumn TItem="Transaction" HeaderText="Amount" PropertyName="Amount" FilterOperator="FilterOperator.GreaterThanOrEquals" TextAlignment="Alignment.End">
+            @context.Amount
+        </GridColumn>
+        
+    </Grid>
 }
 
 @code {
     [Parameter]
     public Transaction[]? Transactions { get; set; } = null;
+
+    [Parameter]
+    public int PageSize {get; set;} = 20;
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
 }

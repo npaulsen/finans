@@ -12,13 +12,20 @@
 <Button Color=ButtonColor.Danger @onclick=ShowConfirmationAsync >
     <Icon Name="IconName.FolderX" /> Reset transactions
 </Button>
-<Button Color=ButtonColor.Primary @onclick=ReloadDefaultsAsync >
+<Button Color=ButtonColor.Secondary @onclick=ReloadDefaultsAsync >
     <Icon Name="IconName.FolderSymlink" /> Load Sample Data
+</Button>
+<Button Color=ButtonColor.Primary Type="ButtonType.Link" To="/import" >
+    <Icon Name="IconName.FileEarmarkPlus" /> Import Data
 </Button>
 
 <div class="row">
     <p />
-    @if(allTransactions.Any())
+    @if (allTransactions is null)
+    {
+        <p>Loading transactions..</p>
+    }
+    else if(allTransactions.Any())
     {
         <p>There are currently @allTransactions.Length transactions.</p>
         <p>The earliest is from @allTransactions.First().Date, the latest from @allTransactions.Last().Date.</p>
@@ -45,14 +52,14 @@
         if (confirmation)
         {
             await TransactionService.ClearAllTransactionsAsync();
-            Refresh();
+            await Refresh();
         }
     }
 
     private async Task ReloadDefaultsAsync()
     {
         await TransactionService.LoadPresetsAsync();
-        Refresh();
+        await Refresh();
     }
 
     protected override async Task OnInitializedAsync()
