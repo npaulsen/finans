@@ -1,31 +1,170 @@
 ﻿@page "/import"
 @using BlazorBudget.Web.Data
 @using Microsoft.Extensions.Logging
+@using System.Globalization;
 @inject TransactionService TransactionService
 @inject ILogger<Import> Logger
 
 <PageTitle>Import</PageTitle>
 
 <h1>Import</h1>
-<Tabs EnableFadeEffect="true" NavStyle="NavStyle.Pills">
+<Tabs @ref="tabs" EnableFadeEffect>
     <Tab Title="Choose File" IsActive="true">
         <Content>
-            <p class="mt-3">This is the placeholder content for the <b>File</b> tab.</p>
+            <InputFile OnChange=LoadFile />
         </Content>
     </Tab>
-    <Tab Title="Configure">
+    <Tab Title="Configure" Disabled=@(lines is null)>
         <Content>
-            <p class="mt-3">This is the placeholder content for the <b>Configure Input</b> tab.</p>
+            <div class="row">
+                <div class="col-4">
+                    <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                        <Button Color=ButtonColor.Primary @onclick=AutoDetect Disabled=@(lines is null)>
+                            <Icon Name="IconName.Lightning" /> Auto-detect
+                        </Button>
+                    </div>
+                    <div class="form-row">
+                        <div class="mb-3">
+                            <label>Separator:</label>
+                            <select class="form-control mt-2" @bind="separator">
+                                @foreach (var (name, sep) in possibleSeparators)
+                                {
+                                    <option value="@sep"> @name </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Headers in Line:</label>
+                            <NumberInput TValue="int" @bind-Value="@headersInLineNumber" EnableMinMax="true" Min="1" Max="@(lines?.Count??100)" Placeholder="Enter amount" />
+                            <span class="form-text">You may also click on that line in the preview.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <h3> Preview </h3>
+                    @if (lines is null || !lines.Any())
+                    {
+                        <p class="mt-3">Please first choose a file.</p>
+                    }
+                    else 
+                    {
+                        <ul class="list-group overflow-auto text-break" style="max-height: 500px;">
+                        @foreach (var (line, index) in lines.Select((l, i) => (l, i)))
+                        {
+                            if (index == headersInLineNumber - 1)
+                            {
+                                var parser = new System.Text.RegularExpressions.Regex($"{separator}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                                <li class="list-group-item list-group-item-info text-wrap">
+                                    <Icon Name=IconName.Tag class="m-1"/>
+                                    
+                                    @foreach(var header in parser.Split(lines[headersInLineNumber - 1]))
+                                    {
+                                        <span class="badge bg-info m-1">@header</span>
+                                    }
+                                </li>
+                            } else {
+                                var isData = index >= headersInLineNumber;
+                                var iconName = isData? IconName.DatabaseUp : IconName.EyeSlash;
+                                var additionalClass = isData? "" : "text-decoration-line-through text-secondary";
+                                <li class="list-group-item list-group-item-action @additionalClass small" @onclick="() => headersInLineNumber = index + 1" >
+                                    <Icon Name=iconName class="m-1"/>
+                                    @line
+                                </li>
+                            }
+                        }  
+                        </ul>
+                    }
+                </div>
+            </div>
+            
+
+            
         </Content>
     </Tab>
-    <Tab Title="Import">
+    <Tab Title="Import" Disabled=@(parsedTransactions is null)>
         <Content>
             <p class="mt-3">This is the placeholder content for the <b>Import</b> tab.</p>
         </Content>
     </Tab>
 </Tabs>
 
-@code {
+ @code {
+    const int MaxBytes = 2 * 1024 * 1024;
+    const int MaxLines = 20000;
+    const int PeekLines = 50;
 
-   
+    Tabs tabs = default!;
+
+    // File.
+    private List<string>? lines;
+    
+    // Config.
+    private string separator = ";";
+    private List<(string Name, string Separator)> possibleSeparators = new () {
+        ("Comma", ","),
+        ("Semicolon", ";"),
+        ("Tab", "\t"),
+        ("Space", " "),
+    };
+    private int headersInLineNumber = 1;
+
+    // Final.
+    private CultureInfo Culture = CultureInfo.CreateSpecificCulture("de-DE");
+    private List<Transaction>? parsedTransactions = null;
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        Logger.LogInformation("attempting to load file.");
+        lines = null;
+        parsedTransactions = null;
+        headersInLineNumber = 1;
+        try
+        {
+            using var stream = e.File.OpenReadStream(MaxBytes);
+            using var reader = new StreamReader(stream);
+            lines = new (PeekLines);
+            for (int l = 0; l < PeekLines; l++)
+            {
+                var line = await reader.ReadLineAsync();
+                if (line is null)
+                {
+                    break;
+                }
+                lines.Add(line);
+            }
+            Logger.LogInformation("peeked {numLinesPeeked} lines.", lines.Count);
+            await tabs.ShowTabByIndexAsync(1);
+        } catch (IOException exception) 
+        {
+            Logger.LogError(exception, "Error loading file");
+        }
+    }
+
+    private void AutoDetect() {
+        separator = ";";
+
+        var minimumMeaningfulLineLength = 30;
+
+        var lastContentLine = lines.Count - 1;
+        while (lastContentLine > 0 && lines[lastContentLine].Length < minimumMeaningfulLineLength)
+        {
+            lastContentLine--;
+        }
+
+        // Guess the separator
+        var contentLine = lines[lastContentLine];
+        separator = possibleSeparators.FirstOrDefault(sep => contentLine.Split(sep.Separator).Length >= 5).Separator ?? ";";
+
+        if (lastContentLine == 0) {
+            headersInLineNumber = 1;
+        } else {
+            headersInLineNumber = lastContentLine;
+            while (headersInLineNumber > 1 &&
+                lines[headersInLineNumber - 2].Length > minimumMeaningfulLineLength &&
+                lines[headersInLineNumber - 2].Split(separator).Length >= 5)
+            {
+                headersInLineNumber--;
+            }
+        }
+    }
 }
