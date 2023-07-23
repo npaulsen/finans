@@ -5,6 +5,20 @@ There may be established [alternatives](#-alternatives), but I wanted to play ar
 
 In its current state, it only runs locally, esp. without any integrations.
 
+## Features
+### Importing CSV-formatted transaction data
+ - Detecting delimiter and where the transaction headers start:
+<img width="1152" alt="image" src="https://github.com/npaulsen/finans/assets/286686/43056a6f-9ea4-46d5-af47-417ef67c1608">
+ - ...and column mapping, also with some guessing to minimize manual efforts:
+   
+<img width="764" alt="image" src="https://github.com/npaulsen/finans/assets/286686/62e2b771-0744-485b-9532-f34df7a2c5d8">
+
+### Analysing Earnings and Spendings per month / quarter / any period
+<img width="1421" alt="image" src="https://github.com/npaulsen/finans/assets/286686/41d347f0-d4cb-478c-a13a-4f6a2ae036fd">
+
+### Defining custom rules and categories of spendings / earnings
+(not yet via FE)
+
 ## Alternatives
 Partial list in no particular order.
  - https://apps.apple.com/de/app/finanzblick-online-banking/id401912744
