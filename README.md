@@ -1,4 +1,4 @@
-# Hanz finans
+# Hanz Finans
 Hanz Finans is a private household account book based on categorizing and analysing transactions.
 
 There may be established [alternatives](#-alternatives), but I wanted to play around and use something between Excel and shiny finance apps.
