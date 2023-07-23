@@ -1,14 +1,21 @@
 using System.Text.RegularExpressions;
 
-namespace BlazorBudget.Web.Data;
+namespace BlazorBudget.Core.CsvImport;
 
 
-class CsvLineSplitter
+public class CsvLineSplitter
 {
     private readonly string _separator;
     private readonly Regex _regex; 
 
     public string Separator => _separator;
+
+    public static List<(string Name, string Separator)> PossibleSeparators = new () {
+        ("Comma", ","),
+        ("Semicolon", ";"),
+        ("Tab", "\t"),
+        ("Space", " "),
+    };
 
     public CsvLineSplitter(string separator)
     {

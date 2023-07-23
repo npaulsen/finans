@@ -1,5 +1,6 @@
 ﻿@page "/import"
 @using BlazorBudget.Web.Data
+@using BlazorBudget.Core.CsvImport
 @using System.Text
 @using Microsoft.Extensions.Logging
 @using System.Globalization;
@@ -34,7 +35,7 @@
                         <div class="mb-3">
                             <label>Separator:</label>
                             <select class="form-control mt-2" @bind="Separator" >
-                                @foreach (var (name, sep) in possibleSeparators)
+                                @foreach (var (name, sep) in CsvLineSplitter.PossibleSeparators)
                                 {
                                     <option value="@sep"> @name </option>
                                 }
@@ -112,13 +113,13 @@
                 <div class="col-8">
                     <div class="form-row">
                         <div class="d-grid gap-2 col-6 mx-auto mt-2">
-                            <Button Color=ButtonColor.Primary @onclick=PrepareImport Disabled=AnyMappingsMissingForImport >
+                            <Button Color=ButtonColor.Primary @onclick=PrepareImport Disabled=columnMappings.IsMissingAnyData >
                                 <Icon Name="IconName.Check" /> Done
                             </Button>
                         </div>
                         <div class="mb-3">
                             <label>Date:</label>
-                            <select class="form-control mt-2" @bind="columnIndexDate" >
+                            <select class="form-control mt-2" @bind="columnMappings.Date" >
                                 <option value="">Please choose</option>
                                 @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
                                 {
@@ -126,21 +127,21 @@
                                 }
                             </select>
                             <label>Date format:</label>
-                            <select class="form-control mt-2" @bind="columnDateFormatString" >
+                            <select class="form-control mt-2" @bind="columnMappings.DateFormat" >
                                 <option value="">Please choose</option>
-                                @foreach (var dateFormat in PossibleDateStringFormats)
+                                @foreach (var dateFormat in ColumnMappings.PossibleDateStringFormats)
                                 {
                                     <option value="@dateFormat">@dateFormat</option>
                                 }
                             </select>
-                            @if(columnIndexDate is null || columnDateFormatString is null){
+                            @if(columnMappings.Date is null || columnMappings.DateFormat is null){
                                 <p> Choose!</p>
                             } else {
-                                <span class="badge bg-info">@splitHeaders[columnIndexDate.Value]</span>
-                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexDate.Value]))
+                                <span class="badge bg-info">@splitHeaders[columnMappings.Date.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnMappings.Date.Value]))
                                 {
                                     DateOnly parsedDate;
-                                    var dateParsingOk = DateOnly.TryParseExact(rawValue, columnDateFormatString, out parsedDate);
+                                    var dateParsingOk = DateOnly.TryParseExact(rawValue, columnMappings.DateFormat, out parsedDate);
                                     @if(dateParsingOk){
                                         <span class="badge bg-success">@parsedDate</span>
                                     } else {
@@ -151,18 +152,18 @@
                         </div>
                         <div class="mb-3">
                             <label>Recipient:</label>
-                            <select class="form-control mt-2" @bind="columnIndexRecipient" >
+                            <select class="form-control mt-2" @bind="columnMappings.Recipient" >
                                 <option value="">Please choose</option>
                                 @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
                                 {
                                     <option value="@index">Column @(index+1) – "@header"</option>
                                 }
                             </select>
-                            @if(columnIndexRecipient is null){
+                            @if(columnMappings.Recipient is null){
                                 <p> Choose!</p>
                             } else {
-                                <span class="badge bg-info">@splitHeaders[columnIndexRecipient.Value]</span>
-                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexRecipient.Value]))
+                                <span class="badge bg-info">@splitHeaders[columnMappings.Recipient.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnMappings.Recipient.Value]))
                                 {
                                     @if(!string.IsNullOrWhiteSpace(rawValue)){
                                         <span class="badge bg-success">@rawValue</span>
@@ -174,18 +175,18 @@
                         </div>
                         <div class="mb-3">
                             <label>Reference:</label>
-                            <select class="form-control mt-2" @bind="columnIndexReference" >
+                            <select class="form-control mt-2" @bind="columnMappings.Reference" >
                                 <option value="">Please choose</option>
                                 @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
                                 {
                                     <option value="@index">Column @(index+1) – "@header"</option>
                                 }
                             </select>
-                            @if(columnIndexReference is null){
+                            @if(columnMappings.Reference is null){
                                 <p> Choose!</p>
                             } else {
-                                <span class="badge bg-info">@splitHeaders[columnIndexReference.Value]</span>
-                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexReference.Value]))
+                                <span class="badge bg-info">@splitHeaders[columnMappings.Reference.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnMappings.Reference.Value]))
                                 {
                                     @if(!string.IsNullOrWhiteSpace(rawValue)){
                                         <span class="badge bg-success">@rawValue</span>
@@ -197,7 +198,7 @@
                         </div>
                         <div class="mb-3">
                             <label>Amount:</label>
-                            <select class="form-control mt-2" @bind="columnIndexAmount" >
+                            <select class="form-control mt-2" @bind="columnMappings.Amount" >
                                 <option value="">Please choose</option>
                                 @foreach (var (header, index) in splitHeaders.Select((h,i)=>(h,i)))
                                 {
@@ -205,21 +206,20 @@
                                 }
                             </select>
                             <label>Number format:</label>
-                            <select class="form-control mt-2" @bind="columnAmountCulture" >
+                            <select class="form-control mt-2" @bind="columnMappings.Culture" >
                                 <option value="">Please choose</option>
-                                @foreach (var cultureInfo in PossibleCultureFormats)
+                                @foreach (var cultureInfo in ColumnMappings.PossibleCultureFormats)
                                 {
                                     <option value="@cultureInfo">@cultureInfo</option>
                                 }
                             </select>
-                            @if(columnIndexAmount is null || columnAmountCulture is null){
+                            @if(columnMappings.Amount is null || columnMappings.Culture is null){
                                 <p> Choose!</p>
                             } else {
-                                <span class="badge bg-info">@splitHeaders[columnIndexAmount.Value]</span>
-                                foreach(var rawValue in splitExampleRows.Select(r => r[columnIndexAmount.Value]))
+                                <span class="badge bg-info">@splitHeaders[columnMappings.Amount.Value]</span>
+                                foreach(var rawValue in splitExampleRows.Select(r => r[columnMappings.Amount.Value]))
                                 {
-                                    var culture = CultureInfo.CreateSpecificCulture(columnAmountCulture);
-                                    var numberParsingOk = decimal.TryParse(rawValue, culture, out var parsedAmount);
+                                    var numberParsingOk = decimal.TryParse(rawValue, columnMappings.Culture, out var parsedAmount);
                                     @if(numberParsingOk){
                                         <span class="badge bg-success">@parsedAmount</span>
                                     } else {
@@ -234,28 +234,29 @@
             }
         </Content>
     </Tab>
-    <Tab Title="Import" Disabled=@(parsedTransactions is null)>
+    <Tab Title="Import" Disabled=@(parsingResult is null)>
         <Content>
-            @if (parsedTransactions is not null){
-                if (firstLineFailingParsing is not null) {
-                    <p class="mt-3"><b>@failsDuringParsing<b> line(s) could not be parsed into transactions.</p>                   
+            @if (parsingResult is not null) {
+                if (parsingResult.NumFailures > 0) {
+                    <p class="mt-3"><b>@parsingResult.NumFailures</b> line(s) could not be parsed into transactions.</p>                   
                     <p class="mt-3">The first one was:</p>
-                    <p class="text-monospace">@firstLineFailingParsing</p>
+                    <p class="text-monospace">@parsingResult.FirstFailingLine</p>
                 } else {
                     <p class="mt-3"><b>All</b> lines parsed successfully.</p>
                 }
-                 <div class="d-grid gap-2 col-6 mx-auto mt-2">
-                    <Button Color=ButtonColor.Primary @onclick=DoImport Disabled=AnyMappingsMissingForImport >
+                var transactions = parsingResult.Transactions.ToArray();
+                <div class="d-grid gap-2 col-6 mx-auto mt-2">
+                    <Button Color=ButtonColor.Primary @onclick=DoImport Disabled=(!parsingResult.Transactions.Any()) >
                         <Icon Name="IconName.FileEarmarkPlus" /> Save shown transactions
                     </Button>
                 </div>
-                <TransactionTable Transactions=parsedTransactions />
+                <TransactionTable Transactions=transactions />
             }
         </Content>
     </Tab>
 </Tabs>
 
- @code {
+@code {
     const int MaxBytes = 2 * 1024 * 1024;
     const int MaxLines = 20000;
     const int PeekLines = 50;
@@ -265,10 +266,10 @@
 
 
     // File.
-    private IBrowserFile file;
+    private IBrowserFile? file;
     private string _inputFileId = Guid.NewGuid().ToString();
     private List<string>? lines;
-    
+
     // Config.
     private CsvLineSplitter _splitter = new (",");
     public string Separator 
@@ -280,12 +281,6 @@
             FormatInfoChanged();
         }
     }
-    private List<(string Name, string Separator)> possibleSeparators = new () {
-        ("Comma", ","),
-        ("Semicolon", ";"),
-        ("Tab", "\t"),
-        ("Space", " "),
-    };
     private int headersInLineNumber = 1;
     public int HeadersInLineNumber
     {
@@ -302,28 +297,16 @@
 
     // Column Mapping.
     private string[][]? splitExampleRows = null;
-    private int? columnIndexDate = null;
-    private string? columnDateFormatString;
-    private int? columnIndexRecipient;
-    private int? columnIndexReference;
-    private int? columnIndexType;
-    private int? columnIndexAmount;
-    private string? columnAmountCulture;
+    private ColumnMappings columnMappings = new();
 
-    private string[] PossibleDateStringFormats = new[] {"dd.MM.yyyy","dd.MM.yy"};
-    private string[] PossibleCultureFormats = new[] {"de-DE", "en-US", "en-UK", ""};
-
-    private CultureInfo Culture = CultureInfo.CreateSpecificCulture("de-DE");
-    private Transaction[]? parsedTransactions = null;
-    private int? failsDuringParsing;
-    private string? firstLineFailingParsing;
+    private CsvParsingResult? parsingResult = null;
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         Logger.LogInformation("attempting to load file.");
         headersError = "no data loaded";
         lines = null;
-        parsedTransactions = null;
+        parsingResult = null;
         HeadersInLineNumber = 1;
         file = e.File;
         try
@@ -356,42 +339,8 @@
             return;
         }
 
-        var minimumMeaningfulLineLength = 30;
-        var lastContentLine = lines.Count - 1;
-        while (lastContentLine > 0 && lines[lastContentLine].Length < minimumMeaningfulLineLength)
-        {
-            lastContentLine--;
-        }
-
-        // Guess the separator
-        var contentLine = lines[lastContentLine];
-        foreach (var sep in possibleSeparators)
-        {
-            var testSplitter = new CsvLineSplitter(sep.Separator);
-            var splitData = testSplitter
-                .Split(contentLine)
-                .Select(s => !string.IsNullOrWhiteSpace(s))
-                .ToList();
-            if (splitData.Count >= 5){
-                _splitter = testSplitter;
-                break;
-            }
-            // TODO could also check if the min number of non-empty cells in multiple lines is higher...
-        }
-        if (lastContentLine == 0) {
-            HeadersInLineNumber = 1;
-        } else {
-            HeadersInLineNumber = lastContentLine;
-            while (HeadersInLineNumber > 1 &&
-                lines[HeadersInLineNumber - 2].Length > minimumMeaningfulLineLength &&
-                _splitter
-                    .Split(lines[HeadersInLineNumber - 2])
-                    .Select(s => !string.IsNullOrWhiteSpace(s))
-                    .Count() >= 5)
-            {
-                HeadersInLineNumber--;
-            }
-        }
+        (_splitter, var headerOffset) = CsvFormatGuesser.Guess(lines);
+        HeadersInLineNumber = headerOffset + 1;
     }
 
     private void FormatInfoChanged()
@@ -437,104 +386,52 @@
 
     private async Task HeadersConfirmed()
     {
+        if (splitHeaders is null) {
+            Logger.LogWarning("Headers confirmed - ignoring because no split headers are present.");
+            return;
+        }
         Logger.LogInformation("Headers confirmed");
         splitExampleRows = lines!.Skip(HeadersInLineNumber).Take(3).Select(row => _splitter.Split(row)).ToArray();
 
         // Attempt guessing the right columns:
-        columnIndexAmount = FindBestHeaderMatching("Betrag");
-        columnIndexDate = FindBestHeaderMatching("Valuta", "Wertstellung");
-        columnIndexRecipient = FindBestHeaderMatching("Auftraggeber");
-        columnIndexReference = FindBestHeaderMatching("Verwendungszweck");
-        columnIndexType = FindBestHeaderMatching("Buchungstext");
-
-        if (columnIndexAmount.HasValue && splitExampleRows.Any())
-        {
-            var raw = splitExampleRows[0][columnIndexAmount.Value];
-            if (decimal.TryParse(raw, CultureInfo.CreateSpecificCulture("de-DE"), out _))
-            {
-                columnAmountCulture = "de-DE";
-            } else if (decimal.TryParse(raw, CultureInfo.CreateSpecificCulture("en-US"), out _))
-            {
-                columnAmountCulture = "en-US";
-            }
-        }
-        if (columnIndexDate.HasValue && splitExampleRows.Any())
-        {
-            var raw = splitExampleRows[0][columnIndexDate.Value];
-            columnDateFormatString = PossibleDateStringFormats
-                .FirstOrDefault(format => DateOnly.TryParseExact(raw, format, out _));
-        }
+        columnMappings = CsvFormatGuesser.GuessColumns(splitHeaders, splitExampleRows);
 
         await tabs.ShowTabByIndexAsync(2);
     }
 
-    private int? FindBestHeaderMatching(params string[] matches)
-    {
-        var skipped = splitHeaders
-            .TakeWhile(h => !matches.Any(match => h.Contains(match, StringComparison.OrdinalIgnoreCase)))
-            .Count();
-        return skipped == splitHeaders.Length? null : skipped;
-    }
-
-    private bool AnyMappingsMissingForImport => columnIndexDate is null ||
-            columnAmountCulture is null ||
-            columnDateFormatString is null ||
-            columnIndexAmount is null ||
-            columnIndexRecipient is null ||
-            columnIndexReference is null;
-
     private async Task PrepareImport()
     {
-        if (AnyMappingsMissingForImport) {
+        if (file is null) {
+            return;
+        }
+        if (columnMappings.IsMissingAnyData) {
             Logger.LogWarning("Import not possible, not all mappings are defined!");
             return;
-            }
+        }
         Logger.LogInformation("Attempting import.");
 
-        var parsed = new List<Transaction>();
-        failsDuringParsing = 0;
-        firstLineFailingParsing = null;
-
-        var culture = CultureInfo.CreateSpecificCulture(columnAmountCulture);
-
+        var parser = new CsvStatementParser(_splitter, HeadersInLineNumber - 1, columnMappings);
         using var stream = file.OpenReadStream(MaxBytes);
         using var reader = new StreamReader(stream);
-        for (int l = 0; l < MaxLines; l++)
-        {
-            var line = await reader.ReadLineAsync();
-            if (line is null) break;
-            if (l < HeadersInLineNumber) continue;
-            
-            var cols = _splitter.Split(line);
-            try {
-                var date = DateOnly.ParseExact(cols[columnIndexDate.Value], columnDateFormatString);
-                var amount = decimal.Parse(cols[columnIndexAmount.Value], culture);
-                var type = "";
-                var recipient = cols[columnIndexRecipient.Value];
-                var reference = cols[columnIndexReference.Value];
-                parsed.Add(new (date, amount, type, reference, recipient));
-            } catch (Exception e) {
-                Logger.LogError(e, "error parsing transaction from line '{line}'", line);
-                failsDuringParsing++;
-                firstLineFailingParsing ??= line;
-            }
-        }
+        parsingResult = await parser.ParseCsvFromStreamAsync(reader);
 
-        parsedTransactions = parsed.ToArray();
         await tabs.ShowTabByIndexAsync(3);
     }
 
     private async Task DoImport()
     {
-        await TransactionService.ImportAsync(parsedTransactions.ToList());
+        if (parsingResult is null) return;
+
+        var transactions = parsingResult.Transactions;
+        await TransactionService.ImportAsync(transactions);
         var confirmation = await dialog.ShowAsync(
             title: "Data imported",
-            message1: parsedTransactions.Length + " transactions have been sent.",
+            message1: transactions.Count + " transactions have been sent.",
             message2: "Do you want to perform another import?");
 
         if (confirmation)
         {
-            parsedTransactions = null;
+            parsingResult = null;
             lines = null;
             // https://stackoverflow.com/a/70877124
             _inputFileId = Guid.NewGuid().ToString();

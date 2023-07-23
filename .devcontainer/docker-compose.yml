@@ -8,8 +8,7 @@ services:
 
     volumes:
       - ../..:/workspaces:cached
-      - ${INPUT_DIR:?INPUT_DIR env var is needed}:/data/input
-      - ${DATA_DIR:?DATA_DIR env var is needed}:/data/store
+      - hansfinans-data:/data/store
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
@@ -35,5 +34,6 @@ services:
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
-# volumes:
+volumes:
+  hansfinans-data:
 #   postgres-data:
