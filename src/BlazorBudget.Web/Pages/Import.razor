@@ -13,7 +13,7 @@
 
 <h1>Import</h1>
 <ConfirmDialog @ref="dialog" />
-<Tabs @ref="tabs" EnableFadeEffect>
+<Tabs @ref="tabs" EnableFadeEffect OnShowing=OnShowingTab OnShown=OnTabShown >
     <Tab Title="Choose File" IsActive="true">
         <Content>
             <div class="mt-3">
@@ -219,7 +219,7 @@
                                 <span class="badge bg-info">@splitHeaders[columnMappings.Amount.Value]</span>
                                 foreach(var rawValue in splitExampleRows.Select(r => r[columnMappings.Amount.Value]))
                                 {
-                                    var numberParsingOk = decimal.TryParse(rawValue, columnMappings.Culture, out var parsedAmount);
+                                    var numberParsingOk = decimal.TryParse(rawValue, NumberStyles.Currency, columnMappings.Culture, out var parsedAmount);
                                     @if(numberParsingOk){
                                         <span class="badge bg-success">@parsedAmount</span>
                                     } else {
@@ -234,7 +234,7 @@
             }
         </Content>
     </Tab>
-    <Tab Title="Import" Disabled=@(parsingResult is null)>
+    <Tab Title="Import" Disabled=@(parsingResult is null) >
         <Content>
             @if (parsingResult is not null) {
                 if (parsingResult.NumFailures > 0) {
@@ -245,12 +245,16 @@
                     <p class="mt-3"><b>All</b> lines parsed successfully.</p>
                 }
                 var transactions = parsingResult.Transactions.ToArray();
+                var uniqueTransactions = transactions.ToHashSet().ToArray();
+                if (uniqueTransactions.Length < transactions.Length){
+                    <p class="mt-3">Warning! Ignored <b>@(transactions.Length - uniqueTransactions.Length)</b> duplicate entries.</p>
+                }
                 <div class="d-grid gap-2 col-6 mx-auto mt-2">
                     <Button Color=ButtonColor.Primary @onclick=DoImport Disabled=(!parsingResult.Transactions.Any()) >
                         <Icon Name="IconName.FileEarmarkPlus" /> Save shown transactions
                     </Button>
                 </div>
-                <TransactionTable Transactions=transactions />
+                <TransactionTable Transactions=uniqueTransactions />
             }
         </Content>
     </Tab>
@@ -263,7 +267,6 @@
 
     private Tabs tabs = default!;
     private ConfirmDialog dialog = default!;
-
 
     // File.
     private IBrowserFile? file;
@@ -326,6 +329,7 @@
             }
             Logger.LogInformation("peeked {numLinesPeeked} lines.", lines.Count);
             FormatInfoChanged();
+            StateHasChanged();
             await tabs.ShowTabByIndexAsync(1);
         } catch (IOException exception) 
         {
@@ -335,6 +339,7 @@
 
     private void AutoDetect() 
     {
+        Logger.LogInformation("Autodetect!");
         if (lines is null) {
             return;
         }
@@ -351,7 +356,7 @@
             Logger.LogInformation("Format info was changed, but no lines yet loaded.");
             return;
         }
-        Logger.LogInformation("Format info was changed: {headerRow}, {separator}",headersInLineNumber, Separator);
+        Logger.LogInformation("Format info was changed: headers in row {headerRow}, separator '{separator}'",headersInLineNumber, Separator);
         try {
             if (lines.Count < HeadersInLineNumber)
             {
@@ -395,6 +400,8 @@
 
         // Attempt guessing the right columns:
         columnMappings = CsvFormatGuesser.GuessColumns(splitHeaders, splitExampleRows);
+        
+        StateHasChanged();
 
         await tabs.ShowTabByIndexAsync(2);
     }
@@ -414,6 +421,8 @@
         using var stream = file.OpenReadStream(MaxBytes);
         using var reader = new StreamReader(stream);
         parsingResult = await parser.ParseCsvFromStreamAsync(reader);
+        
+        StateHasChanged();
 
         await tabs.ShowTabByIndexAsync(3);
     }
@@ -441,4 +450,13 @@
             Navigation.NavigateTo("/transactions");
         }
     }
+
+    private void OnShowingTab(TabsEventArgs args)
+    {
+        Logger.LogInformation("tab showing: {activeTab}", args.ActiveTabTitle);
+    }
+    private void OnTabShown(TabsEventArgs args)
+    {
+        Logger.LogInformation("tab shown: {activeTab}", args.ActiveTabTitle);
+    }    
 }

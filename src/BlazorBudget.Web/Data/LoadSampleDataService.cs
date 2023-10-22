@@ -19,9 +19,6 @@ public class LoadSampleDataService : BackgroundService
     {
         _logger.LogInformation($"LoadSampleDataService is starting.");
 
-        stoppingToken.Register(() =>
-            _logger.LogWarning($"Aborted."));
-
         await _transactionService.LoadPresetsAsync();
 
         _logger.LogInformation($"Done.");

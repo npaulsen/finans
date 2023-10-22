@@ -24,7 +24,7 @@ public class ColumnMappings {
         Date is null || Amount is null || Type is null || Recipient is null ||
         Reference is null || Culture is null || DateFormat is null;
 
-    public ColumnOffsets GetColumnOffsets() => IsMissingAnyData? throw new InvalidOperationException() : new(Date.Value, Amount.Value, Type.Value, Recipient.Value, Reference.Value);
+    public ColumnOffsets GetColumnOffsets() => new(Date!.Value, Amount!.Value, Type!.Value, Recipient!.Value, Reference!.Value);
 }
 
 public class CsvStatementParser
@@ -54,7 +54,7 @@ public class CsvStatementParser
     {
         var vals = _splitter.Split(line);
         var date = DateOnly.ParseExact(vals[_columnOffsets.Date], _dateFormat);
-        var amount = decimal.Parse(vals[_columnOffsets.Amount], _culture);
+        var amount = decimal.Parse(vals[_columnOffsets.Amount], NumberStyles.Currency ,_culture);
         var type = vals[_columnOffsets.Type];
         var recipient = vals[_columnOffsets.Recipient];
         var reference = vals[_columnOffsets.Reference];
@@ -77,8 +77,9 @@ public class CsvStatementParser
             {
                 parsed.Add(ParseStatementLine(line));
             }
-            catch
+            catch (Exception e)
             {
+                Console.Error.WriteLine($"Error parsing a line: {e.Message}");
                 failsDuringParsing++;
                 firstLineFailingParsing ??= line;
             }

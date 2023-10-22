@@ -59,9 +59,9 @@ public class CsvFormatGuesser
         {
             Amount = FindBestHeaderMatching("Betrag"),
             Date = FindBestHeaderMatching("Valuta", "Wertstellung"),
-            Recipient = FindBestHeaderMatching("Auftraggeber"),
+            Recipient = FindBestHeaderMatching("Auftraggeber", "Zahlungsempfänger"),
             Reference = FindBestHeaderMatching("Verwendungszweck"),
-            Type = FindBestHeaderMatching("Buchungstext")
+            Type = FindBestHeaderMatching("Buchungstext", "Umsatztyp")
         };
         if (exampleRows.Any())
         {
@@ -70,7 +70,7 @@ public class CsvFormatGuesser
                 var raw = exampleRows[0][mappings.Amount.Value]!;
                 mappings.Culture = ColumnMappings.PossibleCultureFormats
                     .Select(CultureInfo.CreateSpecificCulture)
-                    .FirstOrDefault(ci => decimal.TryParse(raw, ci, out _));
+                    .FirstOrDefault(ci => decimal.TryParse(raw, NumberStyles.Currency, ci, out _));
             }
             if (mappings.Date is not null)
             {

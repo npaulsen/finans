@@ -24,7 +24,10 @@ public class CsvLineSplitter
     }
 
     public string[] Split(string line)
-        => _regex.Split(line).Select(UnwrapQuotations).ToArray();
+        => _regex.Split(line)
+            .Select(UnwrapQuotations)
+            .Select(NormalizeSpaces)
+            .ToArray();
 
     private string UnwrapQuotations(string cellContent)
     {
@@ -38,4 +41,9 @@ public class CsvLineSplitter
         }
         return cellContent;
     }
+
+    /// <summary>
+    /// Replaces "non-breaking space" by "normal" one.
+    /// </summary>
+    private string NormalizeSpaces(string original) => original.Replace('\u00A0', ' ');
 }
