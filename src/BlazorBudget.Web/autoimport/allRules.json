@@ -1,394 +1,898 @@
 [
-    {
-      "Filter": {
-        "TextFilter": "tankstelle",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+  {
+    "Filter": {
+      "TextFilter": "tankstelle",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": " oil ",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "freie harrislee",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "SB-Tank",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": " oil ",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Wiking tank",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "SB-Tank",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "BFT-WILLER",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Wiking tank",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Tanktreff",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "BFT-WILLER",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "SFK",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Tanktreff",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Rose Bikes",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "SFK",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "HSBIKEDISCO",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Rose Bikes",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "VELOCENTER",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "HSBIKEDISCO",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Fahrrad",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "VELOCENTER",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Donkey",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Fahrrad",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "DBVertrieb",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Donkey",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "DB Vertrieb",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Mobilit\u00E4t"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "DBVertrieb",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Zippel",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Sport \u0026 Gesundheit"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "DB Vertrieb",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "race result",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Sport \u0026 Gesundheit"
+    "TargetCategory": "Mobilit\u00E4t"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Zippel",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Apotheke",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Sport \u0026 Gesundheit"
+    "TargetCategory": "Sport \u0026 Gesundheit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "race result",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Galeria",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Shopping"
+    "TargetCategory": "Sport \u0026 Gesundheit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "vfl Bokel",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "AMZN MKTP",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Shopping"
+    "TargetCategory": "Sport \u0026 Gesundheit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Apotheke",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Zalando",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Shopping"
+    "TargetCategory": "Sport \u0026 Gesundheit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Galeria",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Rewe",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Karstadt",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Penny",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Fackelmann",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Markant",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "AMZN MKTP",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Famila",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Saturn",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Aldi",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Zalando",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Alnatura",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Foot Locker",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "biomarkt",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Lebensmittel"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Bestseller",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Phollkomplex",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Essen gehen"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "ScotchSoda",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Restaurant",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Essen gehen"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "J041-DE041",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "AIRBNB",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Reisen"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": " Action ",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Booking Bookin",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Reisen"
+    "TargetCategory": "Shopping"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Rewe",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Hugendubel",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Bildung"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "lidl dienstleistung",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Buecher Rueffer",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Bildung"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Penny",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Amazon music",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Medien"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Markant",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Netflix",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Medien"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Famila",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Prime video",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Medien"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Aldi",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Miete",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Wohnen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Alnatura",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Naturstrom",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Wohnen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "biomarkt",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Erstattung Gas",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Wohnen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Reformhaus",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Erstattung Strom",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Wohnen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "DM Drogerie",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Vodafone",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Wohnen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "DM-Drogerie",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Jysk",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "M\u00F6bel"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Rossmann",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "IKEA",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "M\u00F6bel"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Citti",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Bauhaus",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "M\u00F6bel"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Scandinavian Park",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "ING",
-        "MatchRecipient": true,
-        "MatchReference": false
-      },
-      "TargetCategory": "Finanzen und Vertr\u00E4ge"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Edeka",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "AUSLANDSEINSATZENTGELT",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Finanzen und Vertr\u00E4ge"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Neukauf",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "Cosmos",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Finanzen und Vertr\u00E4ge"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Lebensmittel",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "WP-Abrechnung",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "Sparen"
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Frischemarkt",
+      "MatchRecipient": true,
+      "MatchReference": true
     },
-    {
-      "Filter": {
-        "TextFilter": "",
-        "MatchRecipient": true,
-        "MatchReference": true
-      },
-      "TargetCategory": "[Uncategorized]"
-    }
-  ]
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Fakta",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Steiskal",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Baecker",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Backer",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Passader Backhaus",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Der Brotmacher",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Heinrich von allw",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Flink SE",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Lebensmittel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "OM fresh food",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Phollkomplex",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Lillebrau",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Ordersmart",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Restaurant",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Metro Kino",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Ins blaue",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "SOHOASIA",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "TAKEAWAYCOM",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Subway",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Mr. Sub",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Fresh Inn",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Caf Adele",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Bornhorst",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Forstbaumschule",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "IBRAHIM HAMADA",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "MOBY GMBH",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Onoma Kaffee",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Cafe Goldwasser",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "El Sombrero",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Muddi",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Burger",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Essen gehen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Jasmin Tee",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Geschenke"
+  },
+  {
+    "Filter": {
+      "TextFilter": "AIRBNB",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Reisen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Booking Bookin",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Reisen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Den gamle by",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Reisen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Aarhus",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Reisen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Hugendubel",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Bildung"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Buecher Rueffer",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Bildung"
+  },
+  {
+    "Filter": {
+      "TextFilter": "AWS",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Bildung"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Amazon music",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Medien"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Netflix",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Medien"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Prime video",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Medien"
+  },
+  {
+    "Filter": {
+      "TextFilter": "FLS GmbH",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Arbeit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Finanzamt",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Arbeit"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Miete",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Kunkel",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Naturstrom",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Erstattung Gas",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Erstattung Strom",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Drillisch",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Vodafone",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Wohnen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Jysk",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "DaenischesB",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "IKEA",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Bauhaus",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Interstuhl",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Schulenburg",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "M\u00F6bel"
+  },
+  {
+    "Filter": {
+      "TextFilter": "ING",
+      "MatchRecipient": true,
+      "MatchReference": false
+    },
+    "TargetCategory": "Finanzen und Vertr\u00E4ge"
+  },
+  {
+    "Filter": {
+      "TextFilter": "AUSLANDSEINSATZENTGELT",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Finanzen und Vertr\u00E4ge"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Cosmos",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Finanzen und Vertr\u00E4ge"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Rundfunk",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Finanzen und Vertr\u00E4ge"
+  },
+  {
+    "Filter": {
+      "TextFilter": "WP-Abrechnung",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Sparen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Niklas Paulsen",
+      "MatchRecipient": true,
+      "MatchReference": false
+    },
+    "TargetCategory": "Sparen"
+  },
+  {
+    "Filter": {
+      "TextFilter": "Will this ever happen?",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "Nothing"
+  },
+  {
+    "Filter": {
+      "TextFilter": "",
+      "MatchRecipient": true,
+      "MatchReference": true
+    },
+    "TargetCategory": "[Uncategorized]"
+  }
+]
