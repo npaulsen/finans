@@ -3,19 +3,13 @@ using BlazorBudget.Core.CsvImport;
 
 namespace BlazorBudget.Web.Data;
 
-public partial class TransactionService
+public partial class TransactionService(ILogger<TransactionService> logger)
 {
     /// <summary>
     /// Pure in memory state right now.
     /// </summary>
-    private List<Transaction> _allTransactions;
-    private readonly ILogger<TransactionService> _logger;
-
-    public TransactionService(ILogger<TransactionService> logger)
-    {
-        _logger = logger;
-        _allTransactions = new();
-    }
+    private List<Transaction> _allTransactions = [];
+    private readonly ILogger<TransactionService> _logger = logger;
 
     private List<Transaction> Dedup(IEnumerable<Transaction> allTransactions)
     {
@@ -36,7 +30,7 @@ public partial class TransactionService
     public Task ClearAllTransactionsAsync()
     {
         _logger.LogInformation("Clearing all transactions.");
-        _allTransactions = new();
+        _allTransactions = [];
         return Task.CompletedTask;
     }
 

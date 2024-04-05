@@ -1,18 +1,11 @@
 namespace BlazorBudget.Core.CsvImport;
 
-public class CsvParsingResult
+public class CsvParsingResult(List<Transaction> transactions, int numFailures, string? firstFailingLine)
 {
-    public CsvParsingResult(List<Transaction> transactions, int numFailures, string? firstFailingLine)
-    {
-        Transactions = transactions;
-        NumFailures = numFailures;
-        FirstFailingLine = firstFailingLine;
-    }
 
     // TODO make immutable.
-    public List<Transaction> Transactions { get; init; }
-    public int NumFailures { get; init; }
-    public string? FirstFailingLine { get; init; }
-
+    public List<Transaction> Transactions { get; init; } = transactions;
+    public int NumFailures { get; init; } = numFailures;
+    public string? FirstFailingLine { get; init; } = firstFailingLine;
 
 }

@@ -11,14 +11,14 @@ public class ColumnMappings {
     public int? Recipient { get; set; }
     public int? Reference { get; set; }
 
-    public CultureInfo Culture { get; set; }
+    public CultureInfo? Culture { get; set; }
     
     // TODO maybe simpler to assume it is always fitting with the culture of the number format...
-    public string DateFormat { get; set; }
+    public string? DateFormat { get; set; }
 
     
-    public static IEnumerable<string> PossibleDateStringFormats => new[] {"dd.MM.yyyy","dd.MM.yy"};
-    public static IEnumerable<string> PossibleCultureFormats => new[] {"de-DE", "en-US", "en-UK", ""};
+    public static IEnumerable<string> PossibleDateStringFormats => ["dd.MM.yyyy","dd.MM.yy"];
+    public static IEnumerable<string> PossibleCultureFormats => ["de-DE", "en-US", "en-UK", ""];
 
     public bool IsMissingAnyData =>
         Date is null || Amount is null || Type is null || Recipient is null ||
@@ -27,22 +27,13 @@ public class ColumnMappings {
     public ColumnOffsets GetColumnOffsets() => new(Date!.Value, Amount!.Value, Type!.Value, Recipient!.Value, Reference!.Value);
 }
 
-public class CsvStatementParser
+public class CsvStatementParser(CsvLineSplitter splitter, int headerRowOffset, ColumnOffsets columnOffsets, CultureInfo culture, string dateFormat)
 {
-    private readonly int _headerOffset;
-    private readonly ColumnOffsets _columnOffsets;
-    private readonly CultureInfo _culture;
-    private readonly CsvLineSplitter _splitter;
-    private readonly string _dateFormat;
-
-    public CsvStatementParser(CsvLineSplitter splitter, int headerRowOffset, ColumnOffsets columnOffsets, CultureInfo culture, string dateFormat)
-    {
-        _headerOffset = headerRowOffset;
-        _columnOffsets = columnOffsets;
-        _culture = culture;
-        _splitter = splitter;
-        _dateFormat = dateFormat;
-    }
+    private readonly int _headerOffset = headerRowOffset;
+    private readonly ColumnOffsets _columnOffsets = columnOffsets;
+    private readonly CultureInfo _culture = culture;
+    private readonly CsvLineSplitter _splitter = splitter;
+    private readonly string _dateFormat = dateFormat;
 
     public CsvStatementParser(CsvLineSplitter splitter, int headerRowOffset, ColumnMappings mappings)
         : this(splitter, headerRowOffset, mappings.GetColumnOffsets(), mappings.Culture!, mappings.DateFormat!)

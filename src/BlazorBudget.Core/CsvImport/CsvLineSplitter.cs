@@ -10,12 +10,12 @@ public class CsvLineSplitter
 
     public string Separator => _separator;
 
-    public static List<(string Name, string Separator)> PossibleSeparators = new () {
+    public static List<(string Name, string Separator)> PossibleSeparators = [
         ("Comma", ","),
         ("Semicolon", ";"),
         ("Tab", "\t"),
         ("Space", " "),
-    };
+    ];
 
     public CsvLineSplitter(string separator)
     {

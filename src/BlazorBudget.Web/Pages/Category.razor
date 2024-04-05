@@ -25,7 +25,9 @@
 
         rules = allRules.Where(r => r.TargetCategory == CategoryName).ToArray();
 
-        categoryTransactions = allTransactions.Where(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory == CategoryName).ToArray();
+        categoryTransactions = allTransactions
+            .Where(transaction => allRules.First(r => r.Filter.Matches(transaction)).TargetCategory == CategoryName)
+            .ToArray();
 
     }
 }
